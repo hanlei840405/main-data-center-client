@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaoqiaoli.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.xiaoqiaoli.domain.RoleDO">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="CODE" property="code" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="CHAR"/>
+        <result column="CREATOR" property="creator" jdbcType="VARCHAR"/>
+        <result column="CREATED" property="created" jdbcType="TIMESTAMP"/>
+        <result column="MODIFIER" property="modifier" jdbcType="VARCHAR"/>
+        <result column="MODIFIED" property="modified" jdbcType="TIMESTAMP"/>
+        <result column="VERSION" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="get" resultMap="BaseResultMap">
+        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM MDC_ROLE T1
+        WHERE T1.ID = #{id}
+    </select>
+    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM MDC_ROLE T1
+        WHERE T1.CODE = #{code}
+    </select>
+    <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM MDC_ROLE T1
+        <if test="username != null">
+            INNER JOIN MDC_ACCOUNT_ROLE T2 ON T1.ID = T2.ROLE_ID
+            INNER JOIN MDC_ACCOUNT T3 ON T2.ACCOUNT_ID = T3.ID
+        </if>
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="name != null and name != ''">
+                T1.NAME LIKE CONCAT('%',#{name},%);
+            </if>
+            <if test="username != null">
+                    AND T3.USERNAME = #{username}
+            </if>
+        </trim>
+    </select>
+    <insert id="insert" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        INSERT INTO MDC_ROLE(
+        ID,
+        CODE,
+        NAME,
+        STATUS,
+        CREATOR,
+        CREATED,
+        MODIFIER,
+        MODIFIED,
+        VERSION
+        ) VALUES (
+        #{id},
+        #{code},
+        #{name},
+        #{status},
+        #{creator},
+        #{created},
+        #{modifier},
+        #{modified},
+        #{version}
+        );
+    </insert>
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO MDC_ROLE(
+        ID,
+        CODE,
+        NAME,
+        STATUS,
+        CREATOR,
+        CREATED,
+        MODIFIER,
+        MODIFIED,
+        VERSION
+        ) VALUES
+        <foreach collection="ts" item="item" index="index"
+                 separator=",">
+            (
+            #{item.id},
+            #{item.code},
+            #{item.name},
+            #{item.status},
+            #{item.creator},
+            #{item.created},
+            #{item.modifier},
+            #{item.modified},
+            #{item.version}
+            )
+        </foreach>
+    </insert>
+    <update id="update" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        UPDATE MDC_ROLE
+        <set>
+            CODE = #{code},
+            NAME = #{name},
+            MODIFIER = #{modifier},
+            MODIFIED = #{modified},
+            VERSION = #{version} + 1
+        </set>
+        WHERE ID = #{id} AND VERSION = #{version}
+    </update>
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
+            UPDATE MDC_ROLE
+            <set>
+                CODE = #{item.code},
+                NAME = #{item.name},
+                MODIFIER = #{item.modifier},
+                MODIFIED = #{item.modified},
+                VERSION = #{item.version} + 1
+            </set>
+            WHERE ID = #{item.id} AND VERSION = #{item.version}
+        </foreach>
+    </update>
+    <delete id="delete" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        UPDATE MDC_ROLE
+        <set>
+            STATUS = #{status},
+            MODIFIER = #{modifier},
+            MODIFIED = #{modified},
+            VERSION = #{version} + 1
+        </set>
+        WHERE ID = #{id} AND VERSION = #{version}
+    </delete>
+    <delete id="batchDelete" parameterType="java.util.List">
+        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
+            UPDATE MDC_ROLE
+            <set>
+                STATUS = #{item.status},
+                MODIFIER = #{item.modifier},
+                MODIFIED = #{item.modified},
+                VERSION = #{item.version} + 1
+            </set>
+            WHERE ID = #{item.id} AND VERSION = #{item.version}
+        </foreach>
+    </delete>
+    <insert id="connectAccount" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        INSERT INTO MDC_ACCOUNT_ROLE(
+        ACCOUNT_ID,
+        ROLE_ID
+        ) VALUES
+        <foreach collection="accounts" item="item" index="index"
+                 separator=",">
+            (
+            #{item.id},
+            #{id}
+            )
+        </foreach>
+    </insert>
+    <delete id="disConnectAccount">
+        DELETE FROM MDC_ACCOUNT_ROLE
+        WHERE ROLE_ID = #{roleId};
+    </delete>
+</mapper>

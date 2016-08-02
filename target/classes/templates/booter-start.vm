@@ -1,0 +1,34 @@
+<!-- Javascript Libraries -->
+<!-- jQuery -->
+<script src="js/jquery.min.js"></script> <!-- jQuery Library -->
+<script src="js/jquery-ui.min.js"></script> <!-- jQuery UI -->
+
+<!-- Bootstrap -->
+<script src="js/bootstrap.min.js"></script>
+
+<!--  Form Related -->
+<script src="js/validation/validate.min.js"></script> <!-- jQuery Form Validation Library -->
+<script src="js/validation/validationEngine.min.js"></script> <!-- jQuery Form Validation Library - requirred with above js -->
+<script src="js/select.min.js"></script> <!-- Custom Select -->
+<script src="js/chosen.min.js"></script> <!-- Custom Multi Select -->
+<script src="js/datetimepicker.min.js"></script> <!-- Date & Time Picker -->
+<script src="js/colorpicker.min.js"></script> <!-- Color Picker -->
+<script src="js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
+<script src="js/autosize.min.js"></script> <!-- Textare autosize -->
+<script src="js/toggler.min.js"></script> <!-- Toggler -->
+<script src="js/input-mask.min.js"></script> <!-- Input Mask -->
+<script src="js/spinner.min.js"></script> <!-- Spinner -->
+<script src="js/slider.min.js"></script> <!-- Input Slider -->
+<script src="js/fileupload.min.js"></script> <!-- File Upload -->
+
+<!-- Text Editor -->
+<script src="js/editor2.min.js"></script> <!-- WYSIWYG Editor -->
+<script src="js/markdown.min.js"></script> <!-- Markdown Editor -->
+
+<!-- UX -->
+<script src="js/scroll.min.js"></script> <!-- Custom Scrollbar -->
+
+<!-- Other -->
+<script src="js/calendar.min.js"></script> <!-- Calendar -->
+<script src="js/feeds.min.js"></script> <!-- News Feeds -->
+<script src="js/functions.js"></script>
