@@ -11,6 +11,8 @@ import java.util.List;
  */
 @Mapper
 public interface RoleMapper extends BaseMapper<RoleDO, String> {
+    List<RoleDO> findByMultiIds(String[] ids);
+
     int connectAccount(RoleDO roleDO);
 
     int disConnectAccount(@Param("roleId") String roleId);

@@ -1,14 +1,16 @@
 package com.xiaoqiaoli.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xiaoqiaoli.domain.UserDO;
-import com.xiaoqiaoli.dto.Page;
 import com.xiaoqiaoli.dto.UserDTO;
 import com.xiaoqiaoli.manager.UserManager;
 import com.xiaoqiaoli.service.UserLocalService;
 import com.xiaoqiaoli.service.client.UserRemoteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,15 +33,6 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
 
     @Override
     public UserDO localGet(String id) {
-//        UserDO userDO = new UserDO();
-//        userDO.setId(id);
-//        userDO.setBirthday(new Date());
-//        userDO.setEmail("jesse.18@163.com");
-//        userDO.setLevel(Level.A);
-//        userDO.setQq("79627595");
-//        userDO.setSex("M");
-//        userDO.setRealName("韩磊");
-//        userDO.setTelephone("18615267773");
         return userManager.get(id);
     }
 
@@ -75,16 +68,15 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
 
     @Override
     public Page<UserDO> localPage(Page<UserDO> page, String realName, String telephone, String qq, String wx, String weiBo) {
-        PageHelper.startPage(page.getStartRow(), page.getRowCount());
-        List<UserDO> userDOs = userManager.find(realName,telephone,qq,wx,weiBo);
-        page.setRows(userDOs);
-        return page;
+        PageHelper.startPage(page.getPageNum(), page.getPageSize());
+        Page<UserDO> userDOs = (Page<UserDO>) userManager.find(realName, telephone, qq, wx, weiBo);
+        return userDOs;
     }
 
     @Override
     public UserDO insert(UserDO userDO) {
         int result = userManager.insert(userDO);
-        if(result > 0) {
+        if (result > 0) {
             return userManager.get(userDO.getId());
         }
         return null;
@@ -92,11 +84,22 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
 
     @Override
     public UserDO update(UserDO userDO) {
+        int result = userManager.update(userDO);
+        if (result > 0) {
+            return userManager.get(userDO.getId());
+        }
         return null;
     }
 
     @Override
     public void delete(String id) {
-
+        userManager.delete(localGet(id));
     }
+
+    @Override
+    public void batchDelete(String[] ids) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userManager.batchDelete(userManager.findByMultiIds(ids), principal.getUsername());
+    }
+
 }

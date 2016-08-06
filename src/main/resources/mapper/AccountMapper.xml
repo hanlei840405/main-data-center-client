@@ -31,7 +31,7 @@
         LEFT JOIN MDC_USER T2 ON T1.USER_ID = T2.ID
         WHERE T1.ID = #{id}
     </select>
-    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.AccountDO">
+    <select id="getOne" resultMap="BaseResultMap">
         SELECT T1.ID, T1.USERNAME, T1.PASSWORD, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
         T2.ID AS USER_ID, T2.REAL_NAME, T2.SEX, T2.BIRTHDAY, T2.TELEPHONE, T2.EMAIL, T2.QQ, T2.WX, T2.WEI_BO, T2.LEVEL
         FROM MDC_ACCOUNT T1
@@ -45,7 +45,7 @@
             </if>
         </trim>
     </select>
-    <insert id="insert" parameterType="com.xiaoqiaoli.domain.AccountDO">
+    <insert id="insert">
         INSERT INTO MDC_ACCOUNT(
         ID,
         USERNAME,
@@ -64,13 +64,13 @@
         #{user.id},
         #{status},
         #{creator},
-        #{created},
+        now(),
         #{modifier},
-        #{modified},
+        now(),
         #{version}
         );
     </insert>
-    <insert id="batchInsert" parameterType="java.util.List">
+    <insert id="batchInsert">
         INSERT INTO MDC_ACCOUNT(
         ID,
         USERNAME,
@@ -92,9 +92,9 @@
             #{item.user.id},
             #{item.status},
             #{item.creator},
-            #{item.created},
+            now(),
             #{item.modifier},
-            #{item.modified},
+            now(),
             #{item.version}
             )
         </foreach>
@@ -107,12 +107,12 @@
             PASSWORD = #{birthday},
             USER_ID = #{telephone},
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </update>
-    <update id="batchUpdate" parameterType="java.util.List">
+    <update id="batchUpdate">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_ACCOUNT
             <set>
@@ -121,30 +121,30 @@
                 PASSWORD = #{item.birthday},
                 USER_ID = #{item.telephone},
                 MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
+                MODIFIED = now(),
                 VERSION = #{item.version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>
     </update>
-    <delete id="delete" parameterType="com.xiaoqiaoli.domain.AccountDO">
+    <delete id="delete">
         UPDATE MDC_ACCOUNT
         <set>
-            STATUS = #{status},
+            STATUS = 0,
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </delete>
-    <delete id="batchDelete" parameterType="java.util.List">
+    <delete id="batchDelete">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_ACCOUNT
             <set>
-                STATUS = #{item.status},
-                MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
-                VERSION = #{item.version} + 1
+                STATUS = 0,
+                MODIFIER = #{modifier},
+                MODIFIED = now(),
+                VERSION = #{version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>

@@ -13,14 +13,15 @@ $(document).ready(function () {
         //formatDate: 'Y/m/d'
     });
 
-    $('#user-add-submit').bind('click', function () {
+    $('#user-edit-submit').bind('click', function () {
         $.ajax({
-            url: '/user/save',
+            url: '/user/update',
             type: 'POST',
-            data: new FormData($('#user-add-form')[0]),
+            data: new FormData($('#user-edit-form')[0]),
             processData: false,
             contentType: false,
             success: function (res) {
+                debugger;
                 if (res.status == 200) {
                     var pageSize = $('.page-size').val();
                     loadModule('/user/index?pageNum=1&pageSize=' + pageSize);

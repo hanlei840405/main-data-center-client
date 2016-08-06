@@ -1194,7 +1194,7 @@ var DateFormatter;
 
     var dateHelper = null,
         globalLocaleDefault = 'en',
-        globalLocale = 'en';
+        globalLocale = 'ch';
 
     var dateFormatterOptionsDefault = {
         meridiem: ['AM', 'PM']

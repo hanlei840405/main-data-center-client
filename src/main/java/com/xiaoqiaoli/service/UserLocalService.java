@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.service;
 
+import com.github.pagehelper.Page;
 import com.xiaoqiaoli.domain.UserDO;
-import com.xiaoqiaoli.dto.Page;
 
 import java.util.List;
 
@@ -30,5 +30,7 @@ public interface UserLocalService {
     UserDO update(UserDO userDO);
 
     void delete(String id);
+
+    void batchDelete(String[] ids);
 
 }

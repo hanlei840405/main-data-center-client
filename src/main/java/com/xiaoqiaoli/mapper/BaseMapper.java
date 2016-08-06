@@ -11,23 +11,23 @@ import java.util.Map;
 /**
  * Created by hanlei6 on 2016/7/16.
  */
-public interface BaseMapper<T,V extends Serializable> {
+public interface BaseMapper<T, V extends Serializable> {
 
     T get(@Param("id") V id);
 
-    T getOne(T t);
+    T getOne(@Param("t") T t);
 
-    List<T> find(Map<String,Object> params);
+    List<T> find(Map<String, Object> params);
 
-    int delete(T t);
+    int delete(@Param("t") T t);
 
-    int update(T t);
+    int update(@Param("t") T t);
 
-    int insert(T t);
+    int insert(@Param("t") T t);
 
-    int batchInsert(List<T> ts);
+    int batchInsert(@Param("ts") List<T> ts);
 
-    int batchUpdate(List<T> ts);
+    int batchUpdate(@Param("ts") List<T> ts);
 
-    int batchDelete(List<T> ts);
+    int batchDelete(@Param("ts") List<T> ts, @Param("modifier") String modifier);
 }

@@ -11,6 +11,7 @@
         <result column="QQ" property="qq" jdbcType="VARCHAR"/>
         <result column="WX" property="wx" jdbcType="VARCHAR"/>
         <result column="WEI_BO" property="weiBo" jdbcType="VARCHAR"/>
+        <result column="PHOTO" property="photo" jdbcType="VARCHAR"/>
         <result column="LEVEL" property="level" jdbcType="CHAR"/>
         <result column="STATUS" property="status" jdbcType="CHAR"/>
         <result column="CREATOR" property="creator" jdbcType="VARCHAR"/>
@@ -21,19 +22,28 @@
     </resultMap>
     <select id="get" resultMap="BaseResultMap">
         SELECT T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX,
-        T1.WEI_BO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        T1.WEI_BO,T1.PHOTO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
         FROM MDC_USER T1
         WHERE T1.ID = #{id}
     </select>
+    <select id="findByMultiIds" resultMap="BaseResultMap">
+        SELECT T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX,
+        T1.WEI_BO,T1.PHOTO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM MDC_USER T1
+        WHERE T1.ID IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
     <select id="findByRealName" resultMap="BaseResultMap">
         SELECT T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX,
-        T1.WEI_BO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        T1.WEI_BO,T1.PHOTO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
         FROM MDC_USER T1
         WHERE T1.REAl_NAME LIKE CONCAT('%',#{realName},'%')
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX,
-        T1.WEI_BO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        T1.WEI_BO,T1.PHOTO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
         FROM MDC_USER T1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="realName != null and realName != ''">
@@ -56,9 +66,9 @@
             </if>
         </trim>
     </select>
-    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.UserDO">
+    <select id="getOne" resultMap="BaseResultMap">
         SELECT T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX,
-        T1.WEI_BO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        T1.WEI_BO,T1.PHOTO, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
         FROM MDC_USER T1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="email != null and email != ''">
@@ -78,7 +88,7 @@
             </if>
         </trim>
     </select>
-    <insert id="insert" parameterType="com.xiaoqiaoli.domain.UserDO">
+    <insert id="insert">
         INSERT INTO MDC_USER(
         ID,
         REAl_NAME,
@@ -111,13 +121,13 @@
         #{level},
         #{status},
         #{creator},
-        #{created},
+        now(),
         #{modifier},
-        #{modified},
+        now(),
         #{version}
         );
     </insert>
-    <insert id="batchInsert" parameterType="java.util.List">
+    <insert id="batchInsert">
         INSERT INTO MDC_ACCOUNT(
         ID,
         REAl_NAME,
@@ -153,14 +163,14 @@
             #{item.level},
             #{item.status},
             #{item.creator},
-            #{item.created},
+            now(),
             #{item.modifier},
-            #{item.modified},
+            now(),
             #{item.version}
             )
         </foreach>
     </insert>
-    <update id="update" parameterType="com.xiaoqiaoli.domain.UserDO">
+    <update id="update">
         UPDATE MDC_USER
         <set>
             REAl_NAME = #{realName},
@@ -174,12 +184,12 @@
             PHOTO = #{photo},
             LEVEL = #{level},
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </update>
-    <update id="batchUpdate" parameterType="java.util.List">
+    <update id="batchUpdate">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_USER
             <set>
@@ -194,29 +204,29 @@
                 PHOTO = #{item.photo},
                 LEVEL = #{item.level},
                 MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
+                MODIFIED = now(),
                 VERSION = #{item.version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>
     </update>
-    <delete id="delete" parameterType="com.xiaoqiaoli.domain.UserDO">
+    <delete id="delete">
         UPDATE MDC_USER
         <set>
-            STATUS = #{status},
+            STATUS = 0,
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </delete>
-    <delete id="batchDelete" parameterType="java.util.List">
+    <delete id="batchDelete">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_USER
             <set>
-                STATUS = #{item.status},
-                MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
+                STATUS = 0,
+                MODIFIER = #{modifier},
+                MODIFIED = now(),
                 VERSION = #{item.version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}

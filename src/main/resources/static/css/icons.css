@@ -1,7 +1,7 @@
 /* Font Icons */
 .icon {
-    /*display: inline-block;*/
-    /*font-family: 'ios7-icon';*/
+    display: inline-block;
+    font-family: 'ios7-icon';
     -webkit-text-rendering: geometricPrecision;
     -moz-text-rendering: geometricPrecision;
     -ms-text-rendering: geometricPrecision;
@@ -131,7 +131,7 @@ only screen and (                min-resolution: 1.25dppx) {
     .sa-side-page { background-image: url(../img/icon/pages@2x.png); background-size: 25px 21px; }
     .sa-side-chart { background-image: url(../img/icon/chart@2x.png); background-size: 24px 19px; }
     .sa-side-photos { background-image: url(../img/icon/photos@2x.png); background-size: 23px 19px; }
-
+    
     /* Top Menu */
     .sa-top-message { background-image: url(../img/icon/message@2x.png); background-size: 25px 17px; }
     .sa-top-updates { background-image: url(../img/icon/updates@2x.png); background-size: 25px 25px; }
@@ -156,7 +156,7 @@ only screen and (                min-resolution: 1.25dppx) {
     .editor-font { background-image: url(../img/editor/font@2x.png); background-size: 10px 13px; }
     .editor-heading { background-image: url(../img/editor/heading@2x.png); background-size: 10px 13px; }
 
-    /* List Icons */
+    /* List Icons */    
     .sa-list-add { background-image: url(../img/icon/add@2x.png); background-size: 19px 19px;  }
     .sa-list-refresh { background-image: url(../img/icon/refresh@2x.png); background-size: 18px 19px; }
     .sa-list-move { background-image: url(../img/icon/move@2x.png); background-size: 19px 19px; }
@@ -171,7 +171,7 @@ only screen and (                min-resolution: 1.25dppx) {
 
     /* Form */
     .sa-plus { background-image: url(../img/icon/plus-sm@2x.png); background-size: 13px 13px; }
-
+    
     /* Others */
     #menu-toggle { background-image: url(../img/icon/menu@2x.png); background-size: 18px 13px; }
     .main-search { background-image: url(../img/icon/search@2x.png); background-size: 25px 25px; }

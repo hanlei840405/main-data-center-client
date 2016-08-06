@@ -26,7 +26,7 @@ public interface RoleLocalService {
 
     int delete(RoleDO roleDO);
 
-    int batchDelete(List<RoleDO> roleDOs);
+    int batchDelete(String[] ids);
 
     int connectAccount(RoleDO roleDO);
 

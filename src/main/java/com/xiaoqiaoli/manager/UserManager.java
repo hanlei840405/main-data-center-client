@@ -1,9 +1,6 @@
 package com.xiaoqiaoli.manager;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.xiaoqiaoli.domain.UserDO;
-import com.xiaoqiaoli.mapper.BaseMapper;
 import com.xiaoqiaoli.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,25 +9,26 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/7/15.
  */
 @Component
-public class UserManager extends BaseManager<UserDO, String> {
+public class UserManager {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManager.class);
     @Autowired
     private UserMapper userMapper;
 
-    @Override
-    protected BaseMapper<UserDO, String> baseMapper() {
-        return userMapper;
-    }
-
     @Cacheable(cacheNames = "mdc:user", key = "'user'.concat(#realName)")
     public List<UserDO> findByRealName(String realName) {
         return userMapper.findByRealName(realName);
+    }
+
+    public List<UserDO> findByMultiIds(String[] ids) {
+        return userMapper.findByMultiIds(ids);
     }
 
     @Cacheable(cacheNames = "mdc:user", key = "'user'.concat(#email)")
@@ -78,14 +76,62 @@ public class UserManager extends BaseManager<UserDO, String> {
         return userMapper.find(params);
     }
 
-    @Override
-    @CacheEvict(cacheNames = "mdc:user", allEntries = true)
-    public void deleteCache() {
-        String uuid = UUID.randomUUID().toString();
+    @Cacheable(value = "mdc:user", key = "'user.'.concat(#id)")
+    public UserDO get(String id) {
+        return userMapper.get(id);
+    }
+
+    public int insert(UserDO UserDO) {
         try {
-            LOGGER.info("编号:{},清除缓存,时间:{},参数为:mdc:user", uuid, new Date());
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            return userMapper.insert(UserDO);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            LOGGER.error("新增数据出错，参数：{}", UserDO);
+            return 0;
+        }
+    }
+
+    public int batchInsert(List<UserDO> ts) {
+        try {
+            return userMapper.batchInsert(ts);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:user", key = "'user.'.concat(#userDO.id)")
+    public int update(UserDO userDO) {
+        try {
+            return userMapper.update(userDO);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:user", allEntries = true)
+    public int batchUpdate(List<UserDO> ts) {
+        try {
+            return userMapper.batchUpdate(ts);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:user", key = "'user.'.concat(#userDO.id)")
+    public int delete(UserDO UserDO) {
+        try {
+            return userMapper.delete(UserDO);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:user", allEntries = true)
+    public int batchDelete(List<UserDO> ts, String modifier) {
+        try {
+            return userMapper.batchDelete(ts, modifier);
+        } catch (RuntimeException e) {
+            return 0;
         }
     }
 }

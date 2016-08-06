@@ -4,6 +4,8 @@ import com.xiaoqiaoli.domain.RoleDO;
 import com.xiaoqiaoli.manager.RoleManager;
 import com.xiaoqiaoli.service.RoleLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,8 +65,9 @@ public class RoleServiceImpl implements RoleLocalService {
     }
 
     @Override
-    public int batchDelete(List<RoleDO> roleDOs) {
-        return roleManager.batchDelete(roleDOs);
+    public int batchDelete(String[] ids) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return roleManager.batchDelete(roleManager.findByMultiIds(ids), principal.getUsername());
     }
 
     @Override

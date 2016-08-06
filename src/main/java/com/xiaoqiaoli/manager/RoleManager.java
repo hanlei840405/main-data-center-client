@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.manager;
 
 import com.xiaoqiaoli.domain.RoleDO;
-import com.xiaoqiaoli.mapper.BaseMapper;
+import com.xiaoqiaoli.domain.UserDO;
 import com.xiaoqiaoli.mapper.RoleMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,27 +10,28 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/7/19.
  */
 @Component
-public class RoleManager extends BaseManager<RoleDO,String>{
-    private final static Logger LOGGER = LoggerFactory.getLogger(AccountManager.class);
+public class RoleManager {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoleManager.class);
     @Autowired
     private RoleMapper roleMapper;
-
-    @Override
-    protected BaseMapper<RoleDO, String> baseMapper() {
-        return roleMapper;
-    }
 
     @Cacheable(cacheNames = "mdc:role", key = "'role.'.concat(#code)")
     public RoleDO getByCode(String code) {
         RoleDO query = new RoleDO();
         query.setCode(code);
         return roleMapper.getOne(query);
+    }
+
+    public List<RoleDO> findByMultiIds(String[] ids) {
+        return roleMapper.findByMultiIds(ids);
     }
 
     @Cacheable(cacheNames = "mdc:role", key = "'role.'.concat(#name)")
@@ -47,24 +48,75 @@ public class RoleManager extends BaseManager<RoleDO,String>{
         return roleMapper.find(params);
     }
 
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
     public int connectAccount(RoleDO roleDO) {
-        deleteCache();
         return roleMapper.connectAccount(roleDO);
     }
 
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
     public int disConnectAccount(String roleId) {
-        deleteCache();
         return roleMapper.disConnectAccount(roleId);
     }
 
-    @Override
-    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
-    public void deleteCache() {
-        String uuid = UUID.randomUUID().toString();
+    @Cacheable(value = "mdc:role", key = "'role.'.concat(#id)")
+    public RoleDO get(String id) {
+        return roleMapper.get(id);
+    }
+
+    public int insert(RoleDO RoleDO) {
         try {
-            LOGGER.info("编号:{},清除缓存,时间:{},参数为:mdc:role", uuid, new Date());
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            return roleMapper.insert(RoleDO);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            LOGGER.error("新增数据出错，参数：{}", RoleDO);
+            return 0;
+        }
+    }
+
+    public int batchInsert(List<RoleDO> ts) {
+        try {
+            return roleMapper.batchInsert(ts);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
+    public int update(RoleDO RoleDO) {
+        try {
+
+            return roleMapper.update(RoleDO);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
+    public int batchUpdate(List<RoleDO> ts) {
+        try {
+
+            return roleMapper.batchUpdate(ts);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
+    public int delete(RoleDO RoleDO) {
+        try {
+
+            return roleMapper.delete(RoleDO);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    @CacheEvict(cacheNames = "mdc:role", allEntries = true)
+    public int batchDelete(List<RoleDO> ts, String modifier) {
+        try {
+            return roleMapper.batchDelete(ts, modifier);
+        } catch (RuntimeException e) {
+            return 0;
         }
     }
 }

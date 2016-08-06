@@ -17,10 +17,18 @@
         FROM MDC_ROLE T1
         WHERE T1.ID = #{id}
     </select>
-    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.RoleDO">
+    <select id="getOne" resultMap="BaseResultMap">
         SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
         FROM MDC_ROLE T1
         WHERE T1.CODE = #{code}
+    </select>
+    <select id="findByMultiIds" resultMap="BaseResultMap">
+        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM MDC_ROLE T1
+        WHERE T1.ID IN
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
@@ -34,11 +42,11 @@
                 T1.NAME LIKE CONCAT('%',#{name},%);
             </if>
             <if test="username != null">
-                    AND T3.USERNAME = #{username}
+                AND T3.USERNAME = #{username}
             </if>
         </trim>
     </select>
-    <insert id="insert" parameterType="com.xiaoqiaoli.domain.RoleDO">
+    <insert id="insert">
         INSERT INTO MDC_ROLE(
         ID,
         CODE,
@@ -55,13 +63,13 @@
         #{name},
         #{status},
         #{creator},
-        #{created},
+        now(),
         #{modifier},
-        #{modified},
+        now(),
         #{version}
         );
     </insert>
-    <insert id="batchInsert" parameterType="java.util.List">
+    <insert id="batchInsert">
         INSERT INTO MDC_ROLE(
         ID,
         CODE,
@@ -81,54 +89,54 @@
             #{item.name},
             #{item.status},
             #{item.creator},
-            #{item.created},
+            now(),
             #{item.modifier},
-            #{item.modified},
+            now(),
             #{item.version}
             )
         </foreach>
     </insert>
-    <update id="update" parameterType="com.xiaoqiaoli.domain.RoleDO">
+    <update id="update">
         UPDATE MDC_ROLE
         <set>
             CODE = #{code},
             NAME = #{name},
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </update>
-    <update id="batchUpdate" parameterType="java.util.List">
+    <update id="batchUpdate">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_ROLE
             <set>
                 CODE = #{item.code},
                 NAME = #{item.name},
                 MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
+                MODIFIED = now(),
                 VERSION = #{item.version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>
     </update>
-    <delete id="delete" parameterType="com.xiaoqiaoli.domain.RoleDO">
+    <delete id="delete">
         UPDATE MDC_ROLE
         <set>
-            STATUS = #{status},
+            STATUS = 0,
             MODIFIER = #{modifier},
-            MODIFIED = #{modified},
+            MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </delete>
-    <delete id="batchDelete" parameterType="java.util.List">
+    <delete id="batchDelete">
         <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
             UPDATE MDC_ROLE
             <set>
-                STATUS = #{item.status},
-                MODIFIER = #{item.modifier},
-                MODIFIED = #{item.modified},
+                STATUS = 0,
+                MODIFIER = #{modifier},
+                MODIFIED = now(),
                 VERSION = #{item.version} + 1
             </set>
             WHERE ID = #{item.id} AND VERSION = #{item.version}

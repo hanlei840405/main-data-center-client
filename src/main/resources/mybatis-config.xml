@@ -14,6 +14,8 @@
         <mapper resource = "mapper/UserMapper.xml"/>
         <mapper resource = "mapper/AccountMapper.xml"/>
         <mapper resource = "mapper/RoleMapper.xml"/>
+        <mapper resource = "mapper/OrganizationMapper.xml"/>
+        <mapper resource = "mapper/Company.xml"/>
         <!--<package name="com.xiaoqiaoli.mapper" />-->
     </mappers>
 </configuration>

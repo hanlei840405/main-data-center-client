@@ -41,7 +41,6 @@ public class HomeController {
 
     @RequestMapping("/clearCache")
     public String clearCache() {
-        accountManager.deleteCache();
         return "index";
     }
 }

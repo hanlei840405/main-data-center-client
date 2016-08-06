@@ -3,23 +3,29 @@
     <div class="modal-content">
         <div class="modal-header">
             <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">人员信息-新增</h4>
+            <h4 class="modal-title">人员信息-编辑</h4>
         </div>
         <div class="modal-body">
-            <form id="user-add-form" class="form-horizontal" role="form" enctype="multipart/form-data">
+            <!-- Profile Menu -->
+            <div class="side-widgets text-center s-widget m-b-25" style="float:none;width: auto">
+                <img class="profile-pic animated" src="ext/$!{user.photo}" alt="">
+            </div>
+            <form id="user-edit-form" class="form-horizontal" role="form" enctype="multipart/form-data">
+                <input type="hidden" id="id" name="id" value="$user.id"/>
+                <input type="hidden" id="version" name="version" value="$user.version"/>
                 <div class="form-group">
                     <label for="realName" class="col-md-2 control-label">姓名</label>
 
                     <div class="col-md-4">
                         <input type="text" class="form-control input-sm" id="realName" name="realName"
-                               placeholder="...">
+                               placeholder="..." value="$!user.realName">
                     </div>
 
                     <label for="birthday" class="col-md-2 control-label">出生日期</label>
 
                     <div class="col-md-4">
                         <input type="input" class="form-control input-sm" id="birthday" name="birthday"
-                               placeholder="...">
+                               placeholder="..." value="$!dateTool.format('yyyy-MM-dd',$!user.birthday)">
                     </div>
                 </div>
                 <div class="form-group">
@@ -28,12 +34,16 @@
                     <div class="col-md-4">
                         <div class="radio-inline">
                             <label>
-                                <input type="radio" name="sex" value="M">男
+                                <input type="radio" name="sex" value="M" #if($user.sex == 'M')
+                                       checked
+                                #end>男
                             </label>
                         </div>
                         <div class="radio-inline">
                             <label>
-                                <input type="radio" name="sex" value="F">女
+                                <input type="radio" name="sex" value="F" #if($user.sex == 'F')
+                                       checked
+                                #end>女
                             </label>
                         </div>
                     </div>
@@ -42,33 +52,37 @@
 
                     <div class="col-md-4">
                         <input type="input" class="form-control input-sm" id="telephone" name="telephone"
-                               placeholder="...">
+                               placeholder="..." value="$!user.telephone">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="email" class="col-md-2 control-label">邮箱</label>
 
                     <div class="col-md-4">
-                        <input type="text" class="form-control input-sm" id="email" name="email" placeholder="...">
+                        <input type="text" class="form-control input-sm" id="email" name="email" placeholder="..."
+                               value="$!user.email">
                     </div>
 
                     <label for="qq" class="col-md-2 control-label">QQ</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" id="qq" name="qq" placeholder="...">
+                        <input type="input" class="form-control input-sm" id="qq" name="qq" placeholder="..."
+                               value="$!user.qq">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="wx" class="col-md-2 control-label">微信</label>
 
                     <div class="col-md-4">
-                        <input type="text" class="form-control input-sm" id="wx" name="wx" placeholder="...">
+                        <input type="text" class="form-control input-sm" id="wx" name="wx" placeholder="..."
+                               value="$!user.wx">
                     </div>
 
                     <label for="weiBo" class="col-md-2 control-label">微博</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" id="weiBo" name="weiBo" placeholder="...">
+                        <input type="input" class="form-control input-sm" id="weiBo" name="weiBo" placeholder="..."
+                               value="$!user.weiBo">
                     </div>
                 </div>
                 <div class="form-group">
@@ -82,20 +96,32 @@
 
                     <div class="col-md-4">
                         <select class="select" id="level" name="level">
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
+                            <option value="A" #if($user.level == 'A')
+                                    selected
+                            #end>A
+                            </option>
+                            <option value="B" #if($user.level == 'B')
+                                    selected
+                            #end>B
+                            </option>
+                            <option value="C" #if($user.level == 'C')
+                                    selected
+                            #end>C
+                            </option>
+                            <option value="D" #if($user.level == 'D')
+                                    selected
+                            #end>D
+                            </option>
                         </select>
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-alt" id="user-add-submit">保存</button>
+            <button type="button" class="btn btn-sm btn-alt" id="user-edit-submit">保存</button>
             <button type="button" class="btn btn-sm btn-alt" data-dismiss="modal">关闭</button>
         </div>
     </div>
 </div>
 <script src="js/plugin/jquery.datetimepicker.full.js"></script>
-<script src="js/module/user/add.js"></script>
+<script src="js/module/user/edit.js"></script>
