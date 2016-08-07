@@ -25,39 +25,39 @@ function closeModuleInModal(modal) {
     $('#' + modal).modal('hide');
 }
 
-function pager(mapping, container) {
-    $('.page-first').on('click', function (e) {
-        var pageSize = $('.page-size').val();
-        var payload = $('.table-payload').val();
+function pager(area, mapping, container) {
+    area.find('.page-first').on('click', function (e) {
+        var pageSize = area.find('.page-size').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=1&pageSize=' + pageSize + "&payload=" + payload, container);
     });
-    $('.page-last').on('click', function (e) {
-        var pageNum = $('.page-max').val();
-        var pageSize = $('.page-size').val();
-        var payload = $('.table-payload').val();
+    area.find('.page-last').on('click', function (e) {
+        var pageNum = area.find('.page-max').val();
+        var pageSize = area.find('.page-size').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=' + pageNum + '&pageSize=' + pageSize + "&payload=" + payload, container);
     });
-    $('.page-pre').on('click', function (e) {
-        var pageNum = $('.page-num').val() - 1;
-        var pageSize = $('.page-size').val();
-        var payload = $('.table-payload').val();
+    area.find('.page-pre').on('click', function (e) {
+        var pageNum = area.find('.page-num').val() - 1;
+        var pageSize = area.find('.page-size').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=' + pageNum + '&pageSize=' + pageSize + "&payload=" + payload, container);
     });
-    $('.page-next').on('click', function (e) {
-        var pageNum = $('.page-num').val() + 1;
-        var pageSize = $('.page-size').val();
-        var payload = $('.table-payload').val();
+    area.find('.page-next').on('click', function (e) {
+        var pageNum = area.find('.page-num').val() + 1;
+        var pageSize = area.find('.page-size').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=' + pageNum + '&pageSize=' + pageSize + "&payload=" + payload, container);
     });
-    $('.page-index').on('click', function (e) {
-        var pageNum = $(this).val();
-        var pageSize = $('.page-size').val();
-        var payload = $('.table-payload').val();
+    area.find('.page-index').on('click', function (e) {
+        var pageNum = area.find(this).val();
+        var pageSize = area.find('.page-size').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=' + pageNum + '&pageSize=' + pageSize + "&payload=" + payload, container);
     });
-    $('.page-size').on('change', function(e){
+    area.find('.page-size').on('change', function(e){
         var pageSize = $(this).val();
-        var payload = $('.table-payload').val();
+        var payload = area.find('.table-payload').val();
         loadModule(mapping + '?pageNum=1&pageSize=' + pageSize + "&payload=" + payload, container);
     });
 }

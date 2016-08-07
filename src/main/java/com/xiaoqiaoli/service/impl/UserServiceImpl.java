@@ -25,10 +25,8 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     private UserManager userManager;
 
     @Override
-    public UserDTO remoteGet(String id) {
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(localGet(id), userDTO);
-        return userDTO;
+    public UserDTO remoteGetByAccount(String username) {
+        return null;
     }
 
     @Override

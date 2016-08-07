@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends BaseController<UserDO> {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -98,7 +99,7 @@ public class UserController {
                 user.setPhoto(MD5Util.encode(photo, String.valueOf(System.currentTimeMillis())));
                 Files.copy(file.getInputStream(), Paths.get(imageDir, user.getPhoto()));
             } catch (IOException e) {
-                LOGGER.error("复制图片出现错误,参数：{}", user);
+                LOGGER.error("上传图片出现错误,参数：{}", user);
             }
         }
 
@@ -120,20 +121,18 @@ public class UserController {
     public
     @ResponseBody
     Map<String, Object> update(MultipartFile file, UserDO user, HttpServletRequest request) {
-        boolean replacePhoto = false;
         if (file != null && !file.isEmpty()) {
             try {
                 String photo = user.getRealName() + file.getOriginalFilename() + request.getRemoteHost();
                 user.setPhoto(MD5Util.encode(photo, String.valueOf(System.currentTimeMillis())));
                 Files.copy(file.getInputStream(), Paths.get(imageDir, user.getPhoto()));
-                replacePhoto = true;
             } catch (IOException e) {
-                LOGGER.error("复制图片出现错误,参数：{}", user);
+                LOGGER.error("上传图片出现错误,参数：{}", user);
             }
         }
 
         UserDO exist = userService.localGet(user.getId());
-        if (!replacePhoto) {
+        if (StringUtils.isEmpty(user.getPhoto())) {
             user.setPhoto(exist.getPhoto());
         }
         BeanUtils.copyProperties(user, exist, "creator", "created");
@@ -169,24 +168,5 @@ public class UserController {
     protected void initBinder(WebDataBinder binder) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
-    }
-
-    /**
-     * 返回状态码，状态信息和操作的对象
-     *
-     * @param userDO
-     * @param result
-     * @return
-     */
-    private Map<String, Object> buildResponseStatus(UserDO userDO, Map<String, Object> result) {
-        if (userDO != null) {
-            result.put(Constant.RETURN_MAP_KEY_STATUS, Constant.RETURN_MAP_VALUE_STATUS_SUCCESS);
-            result.put(Constant.RETURN_MAP_KEY_MESSAGE, Constant.RETURN_MAP_VALUE_MESSAGE_INSERT_SUCCESS);
-        } else {
-            result.put(Constant.RETURN_MAP_KEY_STATUS, Constant.RETURN_MAP_VALUE_STATUS_FAILURE);
-            result.put(Constant.RETURN_MAP_KEY_MESSAGE, Constant.RETURN_MAP_VALUE_MESSAGE_INSERT_FAILURE);
-        }
-        result.put(Constant.RETURN_MAP_KEY_OBJECT, userDO);
-        return result;
     }
 }

@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Mapper
 public interface OrganizationMapper extends BaseMapper<OrganizationDO, String> {
-    List<UserDO> findByMultiIds(@Param("ids") String[] ids);
+    List<OrganizationDO> findByMultiIds(@Param("ids") String[] ids);
 }

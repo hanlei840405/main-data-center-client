@@ -23,7 +23,7 @@ public interface UserLocalService {
 
     UserDO localGetByWeiBo(String weiBo);
 
-    Page<UserDO> localPage(Page<UserDO> pageInfo, String realName, String telephone, String qq, String wx, String weiBo);
+    Page<UserDO> localPage(Page<UserDO> page, String realName, String telephone, String qq, String wx, String weiBo);
 
     UserDO insert(UserDO userDO);
 

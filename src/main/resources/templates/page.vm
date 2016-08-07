@@ -1,5 +1,9 @@
 <div class="col-md-1" style="padding-left: 0;">
     <select class="select page-size">
+        <option #if($page.pageSize == 5)
+                selected
+        #end>5
+        </option>
         <option #if($page.pageSize == 10)
                 selected
         #end>10

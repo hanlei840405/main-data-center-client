@@ -41,7 +41,7 @@
             #{item}
         </foreach>
     </select>
-    <select id="find" resultMap="BaseResultMap">
+    <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL,
         T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
         T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE,
@@ -53,7 +53,7 @@
                 AND T1.CODE = #{code}
             </if>
             <if test="name != null and name != ''">
-                T1.NAME LIKE CONCAT('%',#{name},'%')
+                AND T1.NAME LIKE CONCAT('%',#{name},'%')
             </if>
             <if test="organization != null and organization.id != null and organization.id != ''">
                 AND T1.ORGANIZATION_ID = #{organization.id}
