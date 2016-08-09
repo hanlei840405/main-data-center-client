@@ -23,11 +23,13 @@ public interface CorporationLocalService {
 
     CorporationDO update(CorporationDO corporationDO);
 
-    void batchEnable(String[] ids);
+    int batchEnable(String[] ids);
 
-    void batchDisable(String[] ids);
+    int batchDisable(String[] ids);
 
-    void delete(String id);
+    int delete(String id);
 
-    void batchDelete(String[] ids);
+    int batchDelete(String[] ids);
+
+    int adjust(CorporationDO corporationDO);
 }

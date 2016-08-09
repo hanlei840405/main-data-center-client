@@ -24,30 +24,42 @@
         </association>
     </resultMap>
     <select id="get" resultMap="BaseResultMap">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL,
-        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
-        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE,
-        T2.FULL_CODE AS ORGANIZATION_FULL_CODE, T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
-        FROM MDC_ORGANIZATION T1
-        LEFT JOIN MDC_ORGANIZATION T2 ON T1.ORGANIZATION_ID = T2.ID
+        SELECT
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
+        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
+        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        FROM mdc_organization T1
+        LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
         WHERE T1.ID = #{id}
+        AND T1.STATUS = 1
     </select>
-    <select id="findByMultiIds" resultMap="BaseResultMap">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL,
-        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
-        FROM MDC_ORGANIZATION T1
-        WHERE T1.ID IN
+    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        SELECT
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
+        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
+        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        FROM mdc_organization T1
+        LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
+        WHERE CODE = #{code}
+        AND T1.STATUS = 1
+    </select>
+    <select id="findByMultiIds" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        ID, CODE, NAME, FULL_CODE, FULL_NAME, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        FROM mdc_organization
+        WHERE ID IN
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND STATUS = 1
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL,
-        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
-        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE,
-        T2.FULL_CODE AS ORGANIZATION_FULL_CODE, T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
-        FROM MDC_ORGANIZATION T1
-        LEFT JOIN MDC_ORGANIZATION T2 ON T1.ORGANIZATION_ID = T2.ID
+        SELECT
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
+        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
+        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        FROM mdc_organization T1
+        LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="code != null and code != ''">
                 AND T1.CODE = #{code}
@@ -58,17 +70,18 @@
             <if test="organization != null and organization.id != null and organization.id != ''">
                 AND T1.ORGANIZATION_ID = #{organization.id}
             </if>
+            AND T1.STATUS = 1
         </trim>
     </select>
-    <insert id="insert">
-        INSERT INTO MDC_ORGANIZATION(
+    <insert id="insert" parameterType="com.xiaoqiaoli.domain.OrganizationDO">
+        INSERT INTO mdc_organization(
         ID,
         CODE,
         NAME,
         FULL_CODE,
         FULL_NAME,
         LEVEL,
-        <if test="organization != null and organization.id != null and organization.id !=''">
+        <if test="organization != null">
             ORGANIZATION_ID,
         </if>
         STATUS,
@@ -84,7 +97,7 @@
         #{fullCode},
         #{fullName},
         #{level},
-        <if test="organization != null and organization.id != null and organization.id !=''">
+        <if test="organization != null">
             #{organizaiont.id},
         </if>
         #{status},
@@ -95,15 +108,15 @@
         #{version}
         );
     </insert>
-    <insert id="batchInsert">
-        INSERT INTO MDC_ORGANIZATION(
+    <insert id="batchInsert" parameterType="java.util.Map">
+        INSERT INTO mdc_organization(
         ID,
         CODE,
         NAME,
         FULL_CODE,
         FULL_NAME,
         LEVEL,
-        <if test="organization != null and organization.id != null and organization.id !=''">
+        <if test="organization != null">
             ORGANIZATION_ID,
         </if>
         STATUS,
@@ -113,7 +126,7 @@
         MODIFIED,
         VERSION
         ) VALUES
-        <foreach collection="ts" item="item" index="index"
+        <foreach collection="collection" item="item" index="index"
                  separator=",">
             (
             #{item.id},
@@ -122,7 +135,7 @@
             #{item.fullCode},
             #{item.fullName},
             #{item.level},
-            <if test="item.organization != null and item.organization.id != null and item.organization.id !=''">
+            <if test="item.organization != null">
                 #{item.organizaiont.id},
             </if>
             #{item.status},
@@ -134,15 +147,15 @@
             )
         </foreach>
     </insert>
-    <update id="update">
-        UPDATE MDC_ORGANIZATION
+    <update id="update" parameterType="com.xiaoqiaoli.domain.OrganizationDO">
+        UPDATE mdc_organization
         <set>
             CODE = #{code},
             NAME = #{name},
             FULL_CODE = #{fullCode},
             FULL_NAME = #{fullName},
             LEVEL = #{level},
-            <if test="organization != null and organization.id != null and organization.id !=''">
+            <if test="organization != null">
                 ORGANIZATION_ID = #{organization.id},
             </if>
             MODIFIER = #{modifier},
@@ -151,16 +164,16 @@
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </update>
-    <update id="batchUpdate">
-        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
-            UPDATE MDC_ORGANIZATION
+    <update id="batchUpdate" parameterType="java.util.Map">
+        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
+            UPDATE mdc_organization
             <set>
                 CODE = #{item.code},
                 NAME = #{item.name},
                 FULL_CODE = #{item.fullCode},
                 FULL_NAME = #{item.fullName},
                 LEVEL = #{item.level},
-                <if test="item.organization != null and item.organization.id != null and item.organization.id !=''">
+                <if test="item.organization != null">
                     ORGANIZATION_ID = #{item.organization.id},
                 </if>
                 MODIFIER = #{item.modifier},
@@ -170,8 +183,8 @@
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>
     </update>
-    <delete id="delete">
-        UPDATE MDC_ORGANIZATION
+    <delete id="delete" parameterType="com.xiaoqiaoli.domain.OrganizationDO">
+        UPDATE mdc_organization
         <set>
             STATUS = 0,
             MODIFIER = #{modifier},
@@ -180,9 +193,9 @@
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </delete>
-    <delete id="batchDelete">
-        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
-            UPDATE MDC_ORGANIZATION
+    <delete id="batchDelete" parameterType="java.util.Map">
+        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
+            UPDATE mdc_organization
             <set>
                 STATUS = 0,
                 MODIFIER = #{modifier},

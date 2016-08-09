@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hanlei6 on 2016/7/20.
@@ -49,6 +51,9 @@ public class CorporationController extends BaseController<CorporationDO> {
 
     @Autowired
     private GenerateIdRemoteService generateIdRemoteService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Value("${ext.image.dir}")
     private String imageDir;
@@ -76,10 +81,28 @@ public class CorporationController extends BaseController<CorporationDO> {
         Map<String, Object> params = new HashMap<>();
         params.put("key", avatarKey);
         try {
-            String response = HttpClientUtil.httpGetRequest(avatarUrl + "SimpleArea/LookUp", params);
-            Map<String, Object> result = objectMapper.readValue(response, Map.class);
-            List<Map<String, Object>> privinces = (List<Map<String, Object>>) result.get("result");
-            model.addAttribute("provinces", privinces);
+            String provincesCache = redisTemplate.opsForValue().get("provinces");
+            if (StringUtils.isEmpty(provincesCache)) {
+                provincesCache = HttpClientUtil.httpGetRequest(avatarUrl + "SimpleArea/LookUp", params);
+                redisTemplate.opsForValue().set("provinces", provincesCache);
+                redisTemplate.expire("provinces", 1, TimeUnit.DAYS);
+            }
+            Map<String, Object> result = objectMapper.readValue(provincesCache, Map.class);
+            List<Map<String, Object>> provinces = (List<Map<String, Object>>) result.get("result");
+            model.addAttribute("provinces", provinces);
+            Map<String, Object> firstProvince = provinces.get(0);
+            String areaId = firstProvince.get("area_id").toString();
+            String citiesCache = redisTemplate.opsForValue().get(areaId);
+            if (StringUtils.isEmpty(citiesCache)) {
+                params.put("parentId", areaId);
+                citiesCache = HttpClientUtil.httpGetRequest(avatarUrl + "SimpleArea/LookUp", params);
+                redisTemplate.opsForValue().set(areaId, citiesCache);
+                redisTemplate.expire(areaId, 1, TimeUnit.DAYS);
+            }
+            result = objectMapper.readValue(citiesCache, Map.class);
+            List<Map<String, Object>> cities = (List<Map<String, Object>>) result.get("result");
+            model.addAttribute("cities", cities);
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (JsonParseException e) {
@@ -109,15 +132,15 @@ public class CorporationController extends BaseController<CorporationDO> {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> save(MultipartFile logo, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
+    Map<String, Object> save(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
                              MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, CorporationDO corporation) {
-        corporation = uploadCopy(corporation, logo, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
+        corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         corporation.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
         corporation.setCreator(principal.getUsername());
         corporation.setModifier(principal.getUsername());
-        corporation.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.USER.name()));
+        corporation.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.CORPORATION.name()));
         CorporationDO corporationDO = corporationService.insert(corporation);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(corporationDO, result);
@@ -127,9 +150,9 @@ public class CorporationController extends BaseController<CorporationDO> {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> update(MultipartFile logo, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
+    Map<String, Object> update(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
                                MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, CorporationDO corporation) {
-        corporation = uploadCopy(corporation, logo, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
+        corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
 
         CorporationDO exist = corporationService.localGet(corporation.getId());
@@ -191,14 +214,14 @@ public class CorporationController extends BaseController<CorporationDO> {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }
 
-    private CorporationDO uploadCopy(CorporationDO corporation, MultipartFile logo, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
+    private CorporationDO uploadCopy(CorporationDO corporation, MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
                                      MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile) {
         // 营业执照副本
-        if (logo != null && !logo.isEmpty()) {
+        if (logoFile != null && !logoFile.isEmpty()) {
             try {
-                String file = "logo" + corporation.getName() + logo.getOriginalFilename();
+                String file = "logoFile" + corporation.getName() + logoFile.getOriginalFilename();
                 corporation.setLogo(MD5Util.encode(file, String.valueOf(System.currentTimeMillis())));
-                Files.copy(logo.getInputStream(), Paths.get(imageDir, corporation.getLogo()));
+                Files.copy(logoFile.getInputStream(), Paths.get(imageDir, corporation.getLogo()));
             } catch (IOException e) {
                 LOGGER.error("上传LOGO出现错误,参数：{}", corporation);
             }

@@ -27,10 +27,16 @@ public interface UserLocalService {
 
     UserDO insert(UserDO userDO);
 
+    int batchInsert(List<UserDO> userDOs);
+
     UserDO update(UserDO userDO);
 
-    void delete(String id);
+    int batchUpdate(List<UserDO> userDOs);
 
-    void batchDelete(String[] ids);
+    int delete(String id);
+
+    int batchDelete(String[] ids);
+
+    int disConnectRole(String userId);
 
 }

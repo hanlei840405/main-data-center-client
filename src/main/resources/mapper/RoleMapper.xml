@@ -12,27 +12,37 @@
         <result column="MODIFIED" property="modified" jdbcType="TIMESTAMP"/>
         <result column="VERSION" property="version" jdbcType="INTEGER"/>
     </resultMap>
+    <sql id="ROLE_COLUMNS">
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+    </sql>
     <select id="get" resultMap="BaseResultMap">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
-        FROM MDC_ROLE T1
-        WHERE T1.ID = #{id}
+        SELECT
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        FROM mdc_role
+        WHERE ID = #{id}
+        AND STATUS = 1
     </select>
-    <select id="getOne" resultMap="BaseResultMap">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
-        FROM MDC_ROLE T1
-        WHERE T1.CODE = #{code}
+    <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        SELECT
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        FROM mdc_role
+        WHERE CODE = #{code}
+        AND STATUS = 1
     </select>
     <select id="findByMultiIds" resultMap="BaseResultMap">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
-        FROM MDC_ROLE T1
-        WHERE T1.ID IN
+        SELECT
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        FROM mdc_role
+        WHERE ID IN
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
+        AND STATUS = 1
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
-        SELECT T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED,T1.MODIFIER, T1.MODIFIED, T1.VERSION
-        FROM MDC_ROLE T1
+        SELECT
+        T1.ID, T1.CODE, T1.NAME, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION
+        FROM mdc_role T1
         <if test="username != null">
             INNER JOIN MDC_ACCOUNT_ROLE T2 ON T1.ID = T2.ROLE_ID
             INNER JOIN MDC_ACCOUNT T3 ON T2.ACCOUNT_ID = T3.ID
@@ -44,19 +54,12 @@
             <if test="username != null">
                 AND T3.USERNAME = #{username}
             </if>
+            AND T1.STATUS = 1
         </trim>
     </select>
-    <insert id="insert">
-        INSERT INTO MDC_ROLE(
-        ID,
-        CODE,
-        NAME,
-        STATUS,
-        CREATOR,
-        CREATED,
-        MODIFIER,
-        MODIFIED,
-        VERSION
+    <insert id="insert" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        INSERT INTO mdc_role(
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
         ) VALUES (
         #{id},
         #{code},
@@ -69,19 +72,11 @@
         #{version}
         );
     </insert>
-    <insert id="batchInsert">
-        INSERT INTO MDC_ROLE(
-        ID,
-        CODE,
-        NAME,
-        STATUS,
-        CREATOR,
-        CREATED,
-        MODIFIER,
-        MODIFIED,
-        VERSION
+    <insert id="batchInsert" parameterType="java.util.Map">
+        INSERT INTO mdc_role(
+        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
         ) VALUES
-        <foreach collection="ts" item="item" index="index"
+        <foreach collection="collection" item="item" index="index"
                  separator=",">
             (
             #{item.id},
@@ -96,8 +91,8 @@
             )
         </foreach>
     </insert>
-    <update id="update">
-        UPDATE MDC_ROLE
+    <update id="update" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        UPDATE mdc_role
         <set>
             CODE = #{code},
             NAME = #{name},
@@ -107,9 +102,9 @@
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </update>
-    <update id="batchUpdate">
-        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
-            UPDATE MDC_ROLE
+    <update id="batchUpdate" parameterType="java.util.Map">
+        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
+            UPDATE mdc_role
             <set>
                 CODE = #{item.code},
                 NAME = #{item.name},
@@ -120,8 +115,8 @@
             WHERE ID = #{item.id} AND VERSION = #{item.version}
         </foreach>
     </update>
-    <delete id="delete">
-        UPDATE MDC_ROLE
+    <delete id="delete" parameterType="com.xiaoqiaoli.domain.RoleDO">
+        UPDATE mdc_role
         <set>
             STATUS = 0,
             MODIFIER = #{modifier},
@@ -130,9 +125,9 @@
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
     </delete>
-    <delete id="batchDelete">
-        <foreach collection="ts" item="item" index="index" open="" close="" separator=";">
-            UPDATE MDC_ROLE
+    <delete id="batchDelete" parameterType="java.util.Map">
+        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
+            UPDATE mdc_role
             <set>
                 STATUS = 0,
                 MODIFIER = #{modifier},

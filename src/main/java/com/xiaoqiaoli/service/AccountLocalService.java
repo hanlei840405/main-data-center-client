@@ -11,5 +11,5 @@ public interface AccountLocalService {
 
     AccountDO localGetByUsername(String username);
 
-    AccountDO localGetByUserId(String id);
+    AccountDO localGetByUserId(String userId);
 }

@@ -10,13 +10,13 @@ import com.xiaoqiaoli.service.client.CorporationRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/8/7.
@@ -29,31 +29,39 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     private CorporationManager corporationManager;
 
     @Override
+    @Cacheable(cacheNames = "mdc:corporation:username", key = "'/corporationService/remoteGetByAccount/'.concat(#username)")
+    public CorporationDTO remoteGetByAccount(String username) {
+        return null;
+    }
+
+    @Override
+    @Cacheable(cacheNames = "mdc:corporation:id", key = "'/corporationService/localGet/'.concat(#id)")
     public CorporationDO localGet(String id) {
         return corporationManager.get(id);
     }
 
     @Override
+    @Cacheable(cacheNames = "mdc:corporation:name", key = "'/corporationService/localFindByName/'.concat(#name)")
     public List<CorporationDO> localFindByName(String name) {
-        return corporationManager.find(name, null, null);
+        return corporationManager.findByName(name);
     }
 
     @Override
+    @Cacheable(cacheNames = "mdc:corporation:contact", key = "'/corporationService/localFindByContact/'.concat(#contact)")
     public List<CorporationDO> localFindByContact(String contact) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("contact", contact);
-        return corporationManager.find(null, contact, null);
+        return corporationManager.findByContact(contact);
     }
 
     @Override
+    @Cacheable(cacheNames = "mdc:corporation:legalPerson", key = "'/corporationService/localFindByLegalPerson/'.concat(#legalPerson)")
     public List<CorporationDO> localFindByLegalPerson(String legalPerson) {
-        return corporationManager.find(null, null, legalPerson);
+        return corporationManager.findByLegalPerson(legalPerson);
     }
 
     @Override
     public Page<CorporationDO> localPage(Page<CorporationDO> page, String name, String contact, String legalPerson) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<CorporationDO> corporationDOs = (Page<CorporationDO>) corporationManager.find(name, contact, legalPerson);
+        Page<CorporationDO> corporationDOs = (Page<CorporationDO>) corporationManager.findByParams(name, contact, legalPerson);
         return corporationDOs;
     }
 
@@ -67,6 +75,7 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
     public CorporationDO update(CorporationDO corporationDO) {
         int result = corporationManager.update(corporationDO);
         if (result > 0) {
@@ -76,34 +85,40 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
-    public void batchEnable(String[] ids) {
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    public int batchEnable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        corporationManager.enable(ids, principal.getUsername());
+        return corporationManager.enable(ids, principal.getUsername());
     }
 
     @Override
-    public void batchDisable(String[] ids) {
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    public int batchDisable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        corporationManager.disable(ids, principal.getUsername());
+        return corporationManager.disable(ids, principal.getUsername());
     }
 
     @Override
-    public void delete(String id) {
-        corporationManager.delete(localGet(id));
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    public int delete(String id) {
+        return corporationManager.delete(localGet(id));
     }
 
     @Override
-    public void batchDelete(String[] ids) {
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    public int batchDelete(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        corporationManager.batchDelete(ids, principal.getUsername());
+        return corporationManager.batchDelete(corporationManager.findByMultiIds(ids), principal.getUsername());
     }
 
     @Override
-    public CorporationDTO remoteGetByAccount(String username) {
-        return null;
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    public int adjust(CorporationDO corporationDO) {
+        return corporationManager.adjust(corporationDO);
     }
 
     @Override
+    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
     public CorporationDTO remoteUpdate(CorporationDTO corporationDTO, String username) {
         return null;
     }

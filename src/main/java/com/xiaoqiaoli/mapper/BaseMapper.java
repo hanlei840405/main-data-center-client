@@ -1,9 +1,5 @@
 package com.xiaoqiaoli.mapper;
 
-import com.xiaoqiaoli.domain.RoleDO;
-import com.xiaoqiaoli.domain.UserDO;
-import org.apache.ibatis.annotations.Param;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -13,21 +9,23 @@ import java.util.Map;
  */
 public interface BaseMapper<T, V extends Serializable> {
 
-    T get(@Param("id") V id);
+    T get(V id);
 
-    T getOne(@Param("t") T t);
+    T getOne(Map<String, Object> params);
+
+    List<T> findByMultiIds(Map<String, Object> params);
 
     List<T> find(Map<String, Object> params);
 
-    int delete(@Param("t") T t);
+    int delete(T t);
 
-    int update(@Param("t") T t);
+    int update(T t);
 
-    int insert(@Param("t") T t);
+    int insert(T t);
 
-    int batchInsert(@Param("ts") List<T> ts);
+    int batchInsert(Map<String, Object> params);
 
-    int batchUpdate(@Param("ts") List<T> ts);
+    int batchUpdate(Map<String, Object> params);
 
-    int batchDelete(@Param("ts") List<T> ts, @Param("modifier") String modifier);
+    int batchDelete(Map<String, Object> params);
 }
