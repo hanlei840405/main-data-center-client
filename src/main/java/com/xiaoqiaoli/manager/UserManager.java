@@ -23,7 +23,8 @@ public class UserManager extends BaseManager<UserDO, String> {
 
     @Override
     BaseMapper<UserDO, String> getBaseMapper() {
-        return userMapper;
+        threadLocal.set(userMapper);
+        return threadLocal.get();
     }
 
     public UserDO getByEmail(String email) {

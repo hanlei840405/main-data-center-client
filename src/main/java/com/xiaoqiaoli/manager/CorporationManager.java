@@ -24,7 +24,8 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
 
     @Override
     BaseMapper<CorporationDO, String> getBaseMapper() {
-        return corporationMapper;
+        threadLocal.set(corporationMapper);
+        return threadLocal.get();
     }
 
     /**

@@ -4,6 +4,7 @@
 $(document).ready(function () {
     flushComponents();
     flushCheckboxRadio();
+    flushImagePopup();
     pager($('.block-area'), '/corporation/index');
     $('.btn_view').on('click', function () {
         var id = $(this).val();

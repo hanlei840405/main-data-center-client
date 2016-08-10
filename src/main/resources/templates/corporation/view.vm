@@ -1,91 +1,227 @@
-<link href="css/jquery.datetimepicker.css" rel="stylesheet">
-<div class="modal-dialog">
+<link href="css/lightbox.css" rel="stylesheet">
+<div class="modal-dialog" style="width: 900px;">
     <div class="modal-content">
         <div class="modal-header">
             <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">人员信息-查看</h4>
+            <h4 class="modal-title">企业信息-新增</h4>
         </div>
         <div class="modal-body">
-            <!-- Profile Menu -->
-            <div class="side-widgets text-center s-widget m-b-25" style="float:none;width: auto">
-                <img class="profile-pic animated" src="ext/$!{user.photo}" alt="">
-            </div>
             <form class="form-horizontal" role="form">
                 <div class="form-group">
-                    <label class="col-md-2 control-label">姓名</label>
+                    <label class="col-md-2 control-label">类别</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.realName}"/>
+                        <input type="text" class="form-control input-sm" disabled
+                               value="#if($!corporation.category == '0')个人#else 企业#end"/>
                     </div>
-
-                    <label class="col-md-2 control-label">出生日期</label>
-
-                    <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!dateTool.format('yyyy-MM-dd',$!user.birthday)"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label">性别</label>
+                    <label class="col-md-2 control-label">省市</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="#if($!user.sex == 'F')女#else 男#end"/>
-
-                    </div>
-
-                    <label class="col-md-2 control-label">联系电话</label>
-
-                    <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.telephone}"/>
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.province $!corporation.city"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-2 control-label">邮箱</label>
+                    <label class="col-md-2 control-label">地址</label>
 
-                    <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.email}"/>
-                    </div>
-
-                    <label class="col-md-2 control-label">QQ</label>
-
-                    <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.qq}"/>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.address"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-2 control-label">微信</label>
+                    <label class="col-md-2 control-label">名称</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.wx}"/>
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.name"/>
                     </div>
-
-                    <label class="col-md-2 control-label">微博</label>
+                    <label class="col-md-2 control-label">企业电话</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.weiBo}"/>
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.tel"/>
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-md-2 control-label">企业联系人</label>
 
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.contact"/>
+                    </div>
+                    <label class="col-md-2 control-label">企业联系人电话</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.contactTelephone"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">法人</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.legalPerson"/>
+                    </div>
+                    <label class="col-md-2 control-label">法人电话</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.legalPersonTelephone"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">企业联系人身份证号</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.contactIdNumber"/>
+                    </div>
+                    <label class="col-md-2 control-label">法人身份证号</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.legalPersonIdNumber"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">营业执照号码</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.businessLicence"/>
+                    </div>
+                    <label class="col-md-2 control-label">税务登记号码</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.taxRegistrationCertificate"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">组织机构代码证</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.organizationCodeCertificate"/>
+                    </div>
+                    <label class="col-md-2 control-label">银行开户证</label>
+
+                    <div class="col-md-4">
+                        <input type="text" class="form-control input-sm" disabled
+                               value="$!corporation.accountOpeningLicense"/>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
                     <label class="col-md-2 control-label">等级</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="$!{user.level}"/>
+                        <input type="text" class="form-control input-sm" disabled value="$!corporation.level"/>
                     </div>
-
-                    <label class="col-md-2 control-label">状态</label>
+                    <label class="col-md-2 control-label">企业LOGO</label>
 
                     <div class="col-md-4">
-                        <input type="input" class="form-control input-sm" disabled
-                               value="#if($!user.status == '1')在职#else 离职#end"/>
+                        #if(!$corporation.logo)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.logo" data-rel="gallery" class="pirobox_gall img-popup" title="企业LOGO">
+                                <img src="ext/$!corporation.logo" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">营业执照副本</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.businessLicenceCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.businessLicenceCopy" data-rel="gallery" class="pirobox_gall img-popup" title="营业执照副本">
+                                <img src="ext/$!corporation.businessLicenceCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                    <label class="col-md-2 control-label">税务登记号副本</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.taxRegistrationCertificateCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.taxRegistrationCertificateCopy" data-rel="gallery" class="pirobox_gall img-popup" title="税务登记号副本">
+                                <img src="ext/$!corporation.taxRegistrationCertificateCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">组织机构代码证副本</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.organizationCodeCertificateCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.organizationCodeCertificateCopy" data-rel="gallery" class="pirobox_gall img-popup" title="组织机构代码证副本">
+                                <img src="ext/$!corporation.organizationCodeCertificateCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                    <label class="col-md-2 control-label">银行开户副本</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.accountOpeningLicenseCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.accountOpeningLicenseCopy" data-rel="gallery" class="pirobox_gall img-popup" title="银行开户副本">
+                                <img src="ext/$!corporation.accountOpeningLicenseCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">法人身份证正面</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.legalPersonIdentificationCardUpCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.legalPersonIdentificationCardUpCopy" data-rel="gallery" class="pirobox_gall img-popup" title="法人身份证正面">
+                                <img src="ext/$!corporation.legalPersonIdentificationCardUpCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                    <label class="col-md-2 control-label">法人身份证背面</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.legalPersonIdentificationCardDownCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.legalPersonIdentificationCardDownCopy" data-rel="gallery" class="pirobox_gall img-popup" title="法人身份证背面">
+                                <img src="ext/$!corporation.legalPersonIdentificationCardDownCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">企业联系人身份证正面</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.contactIdentificationCardUpCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.contactIdentificationCardUpCopy" data-rel="gallery" class="pirobox_gall img-popup" title="企业联系人身份证正面">
+                                <img src="ext/$!corporation.contactIdentificationCardUpCopy" alt="" width="150">
+                            </a>
+                        #end
+                    </div>
+                    <label class="col-md-2 control-label">企业联系人身份证背面</label>
+
+                    <div class="col-md-4">
+                        #if(!$corporation.contactIdentificationCardDownCopy)
+                            <img src="/img/noPicture.jpg" width="150px">
+                        #else
+                            <a href="ext/$!corporation.contactIdentificationCardDownCopy" data-rel="gallery" class="pirobox_gall img-popup" title="企业联系人身份证背面">
+                                <img src="ext/$!corporation.contactIdentificationCardDownCopy" alt="" width="150">
+                            </a>
+                        #end
                     </div>
                 </div>
             </form>
@@ -95,4 +231,5 @@
         </div>
     </div>
 </div>
-<script src="js/module/user/view.js"></script>
+<!-- Media -->
+<script src="js/module/corporation/view.js"></script>

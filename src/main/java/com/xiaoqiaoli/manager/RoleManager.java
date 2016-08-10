@@ -23,7 +23,8 @@ public class RoleManager extends BaseManager<RoleDO, String> {
 
     @Override
     BaseMapper<RoleDO, String> getBaseMapper() {
-        return roleMapper;
+        threadLocal.set(roleMapper);
+        return threadLocal.get();
     }
 
     /**

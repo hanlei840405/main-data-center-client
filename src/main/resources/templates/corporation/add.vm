@@ -1,4 +1,3 @@
-<link href="css/jquery.datetimepicker.css" rel="stylesheet">
 <div class="modal-dialog" style="width: 900px;">
     <div class="modal-content">
         <div class="modal-header">
@@ -44,9 +43,19 @@
                 <div class="form-group">
                     <label for="address" class="col-md-2 control-label">地址</label>
 
-                    <div class="col-md-10">
+                    <div class="col-md-4">
                         <input type="text" class="form-control input-sm" id="address" name="address"/>
                     </div>
+                </div>
+                <label for="level" class="col-md-2 control-label">等级</label>
+
+                <div class="col-md-4">
+                    <select class="select" id="level" name="level">
+                        <option value="A">普通会员</option>
+                        <option value="B">铜牌会员</option>
+                        <option value="C">银牌会员</option>
+                        <option value="D">金牌会员</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="name" class="col-md-2 control-label">名称</label>
@@ -130,73 +139,108 @@
                     </div>
                 </div>
 
-
-                <div class="form-group">
-                    <label for="level" class="col-md-2 control-label">等级</label>
-
-                    <div class="col-md-4">
-                        <input type="text" class="form-control input-sm" id="level" name="level" placeholder="...">
+                <fieldset>
+                    <legend style="color: #ffffff;font-size: 16px;">资质图片</legend>
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">企业LOGO</span>
+                                <span class="fileupload-exists">企业LOGO</span>
+                                <input type="file" id="logoFile" name="logoFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                    <label for="logo" class="col-md-2 control-label">企业LOGO</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="logoFile" name="logoFile" placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">营业执照副本</span>
+                                <span class="fileupload-exists">营业执照副本</span>
+                                <input type="file" id="blcFile" name="blcFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="blcFile" class="col-md-2 control-label">营业执照副本</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="blcFile" name="blcFile" placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">税务登记号副本</span>
+                                <span class="fileupload-exists">税务登记号副本</span>
+                                <input type="file" id="trccFile" name="trccFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                    <label for="trccFile" class="col-md-2 control-label">税务登记号副本</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="trccFile" name="trccFile"
-                               placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">组织机构代码证副本</span>
+                                <span class="fileupload-exists">组织机构代码证副本</span>
+                                <input type="file" id="occFile" name="occFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="occFile" class="col-md-2 control-label">组织机构代码证副本</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="occFile" name="occFile" placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">银行开户副本</span>
+                                <span class="fileupload-exists">银行开户副本</span>
+                                <input type="file" id="aolcFile" name="aolcFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                    <label for="aolcFile" class="col-md-2 control-label">银行开户副本</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="aolcFile" name="aolcFile"
-                               placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">法人身份证正面</span>
+                                <span class="fileupload-exists">法人身份证正面</span>
+                                <input type="file" id="lpicucFile" name="lpicucFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="lpicucFile" class="col-md-2 control-label">法人身份证正面</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="lpicucFile" name="lpicucFile"
-                               placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">法人身份证背面</span>
+                                <span class="fileupload-exists">法人身份证背面</span>
+                                <input type="file" id="lpicdcFile" name="lpicdcFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                    <label for="lpicdcFile" class="col-md-2 control-label">法人身份证背面</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="lpicdcFile" name="lpicdcFile"
-                               placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">企业联系人身份证正面</span>
+                                <span class="fileupload-exists">企业联系人身份证正面</span>
+                                <input type="file" id="cicucFile" name="cicucFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="cicucFile" class="col-md-2 control-label">企业联系人身份证正面</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="cicucFile" name="cicucFile"
-                               placeholder="...">
+                    <div class="fileupload fileupload-new col-md-3" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail form-control"></div>
+                        <div>
+                            <span class="btn btn-file btn-alt btn-sm">
+                                <span class="fileupload-new">企业联系人身份证背面</span>
+                                <span class="fileupload-exists">企业联系人身份证背面</span>
+                                <input type="file" id="cicdcFile" name="cicdcFile"/>
+                            </span>
+                            <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">删除</a>
+                        </div>
                     </div>
-                    <label for="cicdcFile" class="col-md-2 control-label">企业联系人身份证背面</label>
-
-                    <div class="col-md-4">
-                        <input type="file" class="form-control input-sm" id="cicdcFile" name="cicdcFile"
-                               placeholder="...">
-                    </div>
-                </div>
+                </fieldset>
             </form>
         </div>
         <div class="modal-footer">
@@ -205,5 +249,4 @@
         </div>
     </div>
 </div>
-<script src="js/plugin/jquery.datetimepicker.full.js"></script>
 <script src="js/module/corporation/add.js"></script>

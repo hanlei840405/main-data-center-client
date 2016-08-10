@@ -14,6 +14,7 @@ import java.util.Map;
  * Created by hanlei6 on 2016/8/9.
  */
 public abstract class BaseManager<T, V extends Serializable> {
+    ThreadLocal<BaseMapper<T, V>> threadLocal = new ThreadLocal<>();
     private final static Logger LOGGER = LoggerFactory.getLogger(BaseManager.class);
 
     abstract BaseMapper<T, V> getBaseMapper();

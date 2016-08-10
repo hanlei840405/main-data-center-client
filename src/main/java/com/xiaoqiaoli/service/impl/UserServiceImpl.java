@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -81,6 +82,7 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
+    @Transactional
     public UserDO insert(UserDO userDO) {
         int result = userManager.insert(userDO);
         if (result > 0) {
@@ -90,11 +92,13 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
+    @Transactional
     public int batchInsert(List<UserDO> userDOs) {
         return userManager.batchInsert(userDOs);
     }
 
     @Override
+    @Transactional
     @CacheEvict(cacheNames = "mdc:user:username,mdc:user:mail,mdc:user:telephone,mdc:user:qq,mdc:user:wx,mdc:user:weiBo,mdc:user:realName,mdc:user:weiBo", allEntries = true)
     public UserDO update(UserDO userDO) {
         int result = userManager.update(userDO);
@@ -105,18 +109,21 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(cacheNames = "mdc:user:username,mdc:user:mail,mdc:user:telephone,mdc:user:qq,mdc:user:wx,mdc:user:weiBo,mdc:user:realName,mdc:user:weiBo", allEntries = true)
     public int batchUpdate(List<UserDO> userDOs) {
         return userManager.batchUpdate(userDOs);
     }
 
     @Override
+    @Transactional
     @CacheEvict(cacheNames = "mdc:user:username,mdc:user:mail,mdc:user:telephone,mdc:user:qq,mdc:user:wx,mdc:user:weiBo,mdc:user:realName,mdc:user:weiBo", allEntries = true)
     public int delete(String id) {
         return userManager.delete(localGet(id));
     }
 
     @Override
+    @Transactional
     @CacheEvict(cacheNames = "mdc:user:username,mdc:user:mail,mdc:user:telephone,mdc:user:qq,mdc:user:wx,mdc:user:weiBo,mdc:user:realName,mdc:user:weiBo", allEntries = true)
     public int batchDelete(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -124,6 +131,7 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(cacheNames = "mdc:user:username,mdc:user:mail,mdc:user:telephone,mdc:user:qq,mdc:user:wx,mdc:user:weiBo,mdc:user:realName,mdc:user:weiBo", allEntries = true)
     public int disConnectRole(String userId) {
         return userManager.disConnectRole(userId);

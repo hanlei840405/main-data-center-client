@@ -15,9 +15,7 @@ function loadModule(mapping, container) {
 }
 
 function openModuleInModal(modal, mapping) {
-    $('#' + modal).modal({
-        keyboard: true
-    });
+    $('#' + modal).modal({backdrop: 'static', keyboard: false});
     $('#' + modal).load(mapping);
 }
 

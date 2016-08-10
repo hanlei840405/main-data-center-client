@@ -22,7 +22,8 @@ public class AccountManager extends BaseManager<AccountDO,String> {
 
     @Override
     BaseMapper<AccountDO, String> getBaseMapper() {
-        return accountMapper;
+        threadLocal.set(accountMapper);
+        return threadLocal.get();
     }
 
     /**
