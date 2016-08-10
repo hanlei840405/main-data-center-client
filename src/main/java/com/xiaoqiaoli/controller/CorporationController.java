@@ -1,14 +1,10 @@
 package com.xiaoqiaoli.controller;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.xiaoqiaoli.domain.CorporationDO;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
-import com.xiaoqiaoli.util.HttpClientUtil;
 import com.xiaoqiaoli.util.MD5Util;
 import com.xiaoqiaoli.util.Module;
 import org.slf4j.Logger;
@@ -17,7 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -28,15 +23,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hanlei6 on 2016/7/20.
@@ -52,19 +44,8 @@ public class CorporationController extends BaseController<CorporationDO> {
     @Autowired
     private GenerateIdRemoteService generateIdRemoteService;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     @Value("${ext.image.dir}")
     private String imageDir;
-
-    @Value("${avatar.url}")
-    private String avatarUrl;
-
-    @Value("${avatar.key}")
-    private String avatarKey;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping("/index")
     public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, CorporationDO corporation, Model model) {
@@ -78,40 +59,7 @@ public class CorporationController extends BaseController<CorporationDO> {
 
     @RequestMapping("/add")
     public String add(Model model) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("key", avatarKey);
-        try {
-            String provincesCache = redisTemplate.opsForValue().get("provinces");
-            if (StringUtils.isEmpty(provincesCache)) {
-                provincesCache = HttpClientUtil.httpGetRequest(avatarUrl + "SimpleArea/LookUp", params);
-                redisTemplate.opsForValue().set("provinces", provincesCache);
-                redisTemplate.expire("provinces", 1, TimeUnit.DAYS);
-            }
-            Map<String, Object> result = objectMapper.readValue(provincesCache, Map.class);
-            List<Map<String, Object>> provinces = (List<Map<String, Object>>) result.get("result");
-            model.addAttribute("provinces", provinces);
-            Map<String, Object> firstProvince = provinces.get(0);
-            String areaId = firstProvince.get("area_id").toString();
-            String citiesCache = redisTemplate.opsForValue().get(areaId);
-            if (StringUtils.isEmpty(citiesCache)) {
-                params.put("parentId", areaId);
-                citiesCache = HttpClientUtil.httpGetRequest(avatarUrl + "SimpleArea/LookUp", params);
-                redisTemplate.opsForValue().set(areaId, citiesCache);
-                redisTemplate.expire(areaId, 1, TimeUnit.DAYS);
-            }
-            result = objectMapper.readValue(citiesCache, Map.class);
-            List<Map<String, Object>> cities = (List<Map<String, Object>>) result.get("result");
-            model.addAttribute("cities", cities);
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        model.addAllAttributes(provincesAndCities());
         return "corporation/add";
     }
 
@@ -124,6 +72,7 @@ public class CorporationController extends BaseController<CorporationDO> {
 
     @RequestMapping("/edit")
     public String edit(@RequestParam("id") String id, Model model) {
+        model.addAllAttributes(provincesAndCities());
         CorporationDO corporation = corporationService.localGet(id);
         model.addAttribute("corporation", corporation);
         return "corporation/edit";
@@ -152,10 +101,15 @@ public class CorporationController extends BaseController<CorporationDO> {
     @ResponseBody
     Map<String, Object> update(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
                                MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, CorporationDO corporation) {
+        Map<String,Object> result = new HashMap<>();
         corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
-
         CorporationDO exist = corporationService.localGet(corporation.getId());
+        if(corporation.getVersion() != exist.getVersion()) {
+            LOGGER.error("请求中参数版本与最新版本存在差异,保存失败,失败参数{}", corporation);
+            super.buildResponseStatus(null, result);
+            return result;
+        }
 
         if (StringUtils.isEmpty(corporation.getBusinessLicenceCopy())) {
             corporation.setBusinessLicenceCopy(exist.getBusinessLicenceCopy());
@@ -186,7 +140,6 @@ public class CorporationController extends BaseController<CorporationDO> {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         exist.setModifier(principal.getUsername());
         CorporationDO corporationDO = corporationService.update(exist);
-        Map<String, Object> result = new HashMap<>();
         buildResponseStatus(corporationDO, result);
         return result;
     }

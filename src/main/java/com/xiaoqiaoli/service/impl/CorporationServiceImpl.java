@@ -75,7 +75,7 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public CorporationDO update(CorporationDO corporationDO) {
         int result = corporationManager.update(corporationDO);
         if (result > 0) {
@@ -85,40 +85,40 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int batchEnable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return corporationManager.enable(ids, principal.getUsername());
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int batchDisable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return corporationManager.disable(ids, principal.getUsername());
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int delete(String id) {
         return corporationManager.delete(localGet(id));
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int batchDelete(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return corporationManager.batchDelete(corporationManager.findByMultiIds(ids), principal.getUsername());
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
     public int adjust(CorporationDO corporationDO) {
         return corporationManager.adjust(corporationDO);
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:corporation:username,mdc:corporation:id,mdc:corporation:name,mdc:corporation:contact,mdc:corporation:legalPerson", allEntries = true)
+    @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
     public CorporationDTO remoteUpdate(CorporationDTO corporationDTO, String username) {
         return null;
     }

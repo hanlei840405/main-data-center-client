@@ -56,38 +56,38 @@ public class RoleServiceImpl implements RoleLocalService {
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int update(RoleDO roleDO) {
         return roleManager.update(roleDO);
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int batchUpdate(List<RoleDO> roleDOs) {
         return roleManager.batchUpdate(roleDOs);
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int delete(RoleDO roleDO) {
         return roleManager.delete(roleDO);
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int batchDelete(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return roleManager.batchDelete(roleManager.findByMultiIds(ids), principal.getUsername());
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int connectAccount(RoleDO roleDO) {
         return roleManager.connectAccount(roleDO);
     }
 
     @Override
-    @CacheEvict(cacheNames = "mdc:role:id,mdc:role:code,mdc:role:name,mdc:role:username", allEntries = true)
+    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int disConnectAccount(String roleId) {
         return roleManager.disConnectAccount(roleId);
     }

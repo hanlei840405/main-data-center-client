@@ -7,6 +7,7 @@
         <div class="modal-body">
             <form id="corporation-edit-form" class="form-horizontal" role="form" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="$!corporation.id"/>
+                <input type="hidden" name="version  " value="$!corporation.version"/>
                 <div class="form-group">
                     <label for="sex" class="col-md-2 control-label">类别</label>
 
@@ -30,17 +31,17 @@
 
                     <div class="col-md-3">
                         <div class="col-md-6 m-b-15">
-                            <select class="select" id="province" name="province">
+                            <select class="select" id="provinceCode" name="provinceCode">
                                 #foreach($item in $provinces)
-                                    <option value="$!item.name" #if($corporation.province == $item.name)
+                                    <option value="$!item.area_id" #if($corporation.provinceCode == $item.area_id)
                                             selected #end>$!item.name</option>
                                 #end
                             </select>
                         </div>
                         <div class="col-md-6 m-b-15">
-                            <select class="select" id="city" name="city">
+                            <select class="select" id="cityCode" name="cityCode">
                                 #foreach($item in $cities)
-                                    <option value="$!item.name" #if($corporation.city == $item.name)
+                                    <option value="$!item.area_id" #if($corporation.cityCode == $item.area_id)
                                             selected #end>$!item.name</option>
                                 #end
                             </select>
