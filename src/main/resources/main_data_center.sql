@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50713
 File Encoding         : 65001
 
-Date: 2016-08-11 19:56:59
+Date: 2016-08-12 16:34:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -90,6 +90,29 @@ CREATE TABLE `mdc_corporation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='企业表，category为0时，企业相关类的资质可不上传';
 
 -- ----------------------------
+-- Table structure for mdc_organization
+-- ----------------------------
+DROP TABLE IF EXISTS `mdc_organization`;
+CREATE TABLE `mdc_organization` (
+  `ID` varchar(34) NOT NULL COMMENT '主键',
+  `CODE` varchar(8) DEFAULT NULL COMMENT '编号',
+  `NAME` varchar(50) DEFAULT NULL COMMENT '名称',
+  `FULL_CODE` varchar(255) DEFAULT NULL COMMENT '全路径编号',
+  `FULL_NAME` varchar(255) DEFAULT NULL COMMENT '全路径名称',
+  `LEVEL` char(1) DEFAULT NULL COMMENT '等级',
+  `ORGANIZATION_ID` varchar(34) DEFAULT NULL COMMENT '上级部门id',
+  `CORPORATION_ID` varchar(33) DEFAULT NULL COMMENT '隶属公司',
+  `USER_ID` varchar(26) DEFAULT NULL COMMENT '部门负责人',
+  `STATUS` char(1) DEFAULT NULL COMMENT '状态,0:删除,1:正常',
+  `CREATOR` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `CREATED` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `MODIFIER` varchar(50) DEFAULT NULL COMMENT '修改人',
+  `MODIFIED` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `VERSION` int(11) DEFAULT NULL COMMENT '版本号',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门表';
+
+-- ----------------------------
 -- Table structure for mdc_role
 -- ----------------------------
 DROP TABLE IF EXISTS `mdc_role`;
@@ -122,6 +145,8 @@ CREATE TABLE `mdc_user` (
   `WEI_BO` varchar(50) DEFAULT NULL COMMENT '微博',
   `PHOTO` varchar(50) DEFAULT NULL COMMENT '头像地址',
   `LEVEL` char(1) DEFAULT NULL COMMENT '等级',
+  `CORPORATION_ID` varchar(33) DEFAULT NULL COMMENT '所属企业',
+  `ORGANIZATION_ID` varchar(34) DEFAULT NULL COMMENT '所属组织机构',
   `STATUS` char(1) DEFAULT NULL COMMENT '状态：0:停用，1:在用',
   `CREATOR` varchar(50) DEFAULT NULL COMMENT '创建人ID',
   `CREATED` datetime DEFAULT NULL COMMENT '创建时间',
