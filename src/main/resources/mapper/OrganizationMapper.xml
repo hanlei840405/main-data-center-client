@@ -7,39 +7,49 @@
         <result column="NAME" property="sex" jdbcType="VARCHAR"/>
         <result column="FULL_CODE" property="fullCode" jdbcType="VARCHAR"/>
         <result column="FULL_NAME" property="fullName" jdbcType="VARCHAR"/>
-        <result column="LEVEL" property="birthday" jdbcType="INTEGER"/>
+        <result column="LEVEL" property="level" jdbcType="INTEGER"/>
         <result column="STATUS" property="status" jdbcType="CHAR"/>
         <result column="CREATOR" property="creator" jdbcType="VARCHAR"/>
         <result column="CREATED" property="created" jdbcType="TIMESTAMP"/>
         <result column="MODIFIER" property="modifier" jdbcType="VARCHAR"/>
         <result column="MODIFIED" property="modified" jdbcType="TIMESTAMP"/>
         <result column="VERSION" property="version" jdbcType="INTEGER"/>
+        <association property="user" column="USER_ID" javaType="com.xiaoqiaoli.domain.UserDO">
+            <id column="USER_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+            <result column="REAL_NAME" property="realName" jdbcType="VARCHAR"/>
+        </association>
         <association property="organization" column="ORGANIZATION_ID" javaType="com.xiaoqiaoli.domain.OrganizationDO">
             <id column="ORGANIZATION_ID" property="id" jdbcType="VARCHAR"/>
             <result column="ORGANIZATION_CODE" property="code" jdbcType="VARCHAR"/>
             <result column="ORGANIZATION_NAME" property="name" jdbcType="VARCHAR"/>
-            <result column="ORGANIZATION_FULL_CODE" property="fullCode" jdbcType="VARCHAR"/>
-            <result column="ORGANIZATION_FULL_NAME" property="fullName" jdbcType="VARCHAR"/>
-            <result column="ORGANIZATION_LEVEL" property="birthday" jdbcType="INTEGER"/>
+        </association>
+        <association property="corporation" column="CORPORATION_ID" javaType="com.xiaoqiaoli.domain.CorporationDO">
+            <id column="CORPORATION_ID" property="id" jdbcType="VARCHAR"/>
+            <result column="CORPORATION_NAME" property="name" jdbcType="VARCHAR"/>
         </association>
     </resultMap>
     <select id="get" resultMap="BaseResultMap">
         SELECT
-        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
-        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
-        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
+        T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
+        INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
+        LEFT JOIN mdc_user T4 ON T1.USER_ID = T4.ID
         WHERE T1.ID = #{id}
         AND T1.STATUS = 1
     </select>
     <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.RoleDO">
         SELECT
-        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
-        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
-        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
+        T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
+        INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
+        LEFT JOIN mdc_user T4 ON T1.USER_ID = T4.ID
         WHERE CODE = #{code}
         AND T1.STATUS = 1
     </select>
@@ -55,20 +65,31 @@
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION,
-        T2.ID AS ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_CODE, T2.FULL_CODE AS ORGANIZATION_FULL_CODE,
-        T2.FULL_NAME AS ORGANIZATION_FULL_NAME, T2.LEVEL AS ORGANIZATION_LEVEL
+        T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
+        T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
+        INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
+        LEFT JOIN mdc_user T4 ON T1.USER_ID = T4.ID
         <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="code != null and code != ''">
-                AND T1.CODE = #{code}
-            </if>
             <if test="name != null and name != ''">
                 AND T1.NAME LIKE CONCAT('%',#{name},'%')
             </if>
-            <if test="organization != null and organization.id != null and organization.id != ''">
-                AND T1.ORGANIZATION_ID = #{organization.id}
+            <if test="fullCode != null and fullCode != ''">
+                AND T1.FULL_CODE LIKE CONCAT('%', #{fullCode}, '%')
+            </if>
+            <if test="parentId != null and parentId != ''">
+                AND T2.ID = #{parentId}
+            </if>
+            <if test="parentId == null">
+                AND T2.ID = '0'
+            </if>
+            <if test="corporationCode != null and corporationCode != ''">
+                AND T3.CODE = #{corporationCode}
+            </if>
+            <if test="username != null and username != ''">
+                AND t4.USERNAME = #{username}
             </if>
             AND T1.STATUS = 1
         </trim>
@@ -81,8 +102,14 @@
         FULL_CODE,
         FULL_NAME,
         LEVEL,
+        <if test="corporation != null">
+            CORPORATION_ID,
+        </if>
         <if test="organization != null">
             ORGANIZATION_ID,
+        </if>
+        <if test="user != null">
+            USER_ID,
         </if>
         STATUS,
         CREATOR,
@@ -97,8 +124,14 @@
         #{fullCode},
         #{fullName},
         #{level},
+        <if test="corporation != null">
+            #{corporation.id},
+        </if>
         <if test="organization != null">
             #{organizaiont.id},
+        </if>
+        <if test="user != null">
+            #{user.id},
         </if>
         #{status},
         #{creator},
@@ -107,45 +140,6 @@
         now(),
         #{version}
         );
-    </insert>
-    <insert id="batchInsert" parameterType="java.util.Map">
-        INSERT INTO mdc_organization(
-        ID,
-        CODE,
-        NAME,
-        FULL_CODE,
-        FULL_NAME,
-        LEVEL,
-        <if test="organization != null">
-            ORGANIZATION_ID,
-        </if>
-        STATUS,
-        CREATOR,
-        CREATED,
-        MODIFIER,
-        MODIFIED,
-        VERSION
-        ) VALUES
-        <foreach collection="collection" item="item" index="index"
-                 separator=",">
-            (
-            #{item.id},
-            #{item.code},
-            #{item.name},
-            #{item.fullCode},
-            #{item.fullName},
-            #{item.level},
-            <if test="item.organization != null">
-                #{item.organizaiont.id},
-            </if>
-            #{item.status},
-            #{item.creator},
-            now(),
-            #{item.modifier},
-            now(),
-            #{item.version}
-            )
-        </foreach>
     </insert>
     <update id="update" parameterType="com.xiaoqiaoli.domain.OrganizationDO">
         UPDATE mdc_organization
@@ -158,30 +152,14 @@
             <if test="organization != null">
                 ORGANIZATION_ID = #{organization.id},
             </if>
+            <if test="user != null">
+                USER_ID = #{user.id},
+            </if>
             MODIFIER = #{modifier},
             MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
-    </update>
-    <update id="batchUpdate" parameterType="java.util.Map">
-        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
-            UPDATE mdc_organization
-            <set>
-                CODE = #{item.code},
-                NAME = #{item.name},
-                FULL_CODE = #{item.fullCode},
-                FULL_NAME = #{item.fullName},
-                LEVEL = #{item.level},
-                <if test="item.organization != null">
-                    ORGANIZATION_ID = #{item.organization.id},
-                </if>
-                MODIFIER = #{item.modifier},
-                MODIFIED = now(),
-                VERSION = #{item.version} + 1
-            </set>
-            WHERE ID = #{item.id} AND VERSION = #{item.version}
-        </foreach>
     </update>
     <delete id="delete" parameterType="com.xiaoqiaoli.domain.OrganizationDO">
         UPDATE mdc_organization

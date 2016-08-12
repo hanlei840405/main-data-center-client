@@ -21,5 +21,9 @@ public class OrganizationDO extends BaseDO implements Serializable {
 
     private int level;
 
+    private CorporationDO corporation;
+
     private OrganizationDO organization;
+
+    private UserDO user;
 }

@@ -1,0 +1,83 @@
+<link href="css/bootstrap-treeview.min.css" rel="stylesheet">
+<div class="block-area">
+    <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">人资主数据</a></li>
+        <li class="active">部门列表</li>
+        <li><a href="javascript:void(0)" data-toggle="modal"
+               onclick="openModuleInModal('formModal', '/organization/add')">新增</a>
+        </li>
+        <li><a href="javascript:void(0)" onclick="deleteSelected()">删除</a></li>
+    </ol>
+    <div class="col-md-3">
+        <div id="organizationTree"></div>
+    </div>
+    <div class="col-md-9">
+        <input class="input-sm col-md-4 message-search table-payload" type="text" placeholder="Search....">
+        <table id="user-grid" class="table table-condensed table-hover table-striped tile list-container">
+            <thead>
+            <tr>
+                <th><input type="checkbox" class="pull-left list-parent-check" value=""></th>
+                <th>序号</th>
+                <th>部门编号</th>
+                <th>部门名称</th>
+                <th>全路径编号</th>
+                <th>全路径名称</th>
+                <th>部门负责人</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+                #foreach($item in $page.result)
+                <tr>
+                    <td><input type="checkbox" class="pull-left list-check" value="$item.id"></td>
+                    <td>$!velocityCount</td>
+                    <td>$!item.code</td>
+                    <td>$!item.name</td>
+                    <td>$!item.fullCode</td>
+                    <td>$!item.fullName</td>
+                    <td>$!item.user.realName</td>
+                    <td>#if($!item.status == '1')
+                        正常
+                    #else
+                        删除
+                    #end</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-xs btn-alt btn_view" value="$item.id">查看</button>
+                            <button type="button" class="btn btn-xs btn-alt btn_edit" value="$item.id">编辑</button>
+                            <button type="button" class="btn btn-xs btn-alt btn_delete" value="$item.id">删除</button>
+                        </div>
+                    </td>
+                </tr>
+                #end
+            </tbody>
+        </table>
+    </div>
+    #parse('/page.vm')
+</div>
+<div class="modal fade" id="formModal" tabindex="-1" role="dialog"></div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">删除确认</h4>
+            </div>
+            <div class="modal-body">
+                <p>确认删除选中的数据吗...</p>
+            </div>
+            <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-sm btn_delete">确认</button>
+                    <button type="button" class="btn btn-sm" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/plugin/bootstrap-treeview.min.js"></script>
+<script src="js/module/organization/index.js"></script>

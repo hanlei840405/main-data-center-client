@@ -72,25 +72,6 @@
         #{version}
         );
     </insert>
-    <insert id="batchInsert" parameterType="java.util.Map">
-        INSERT INTO mdc_role(
-        ID, CODE, NAME, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-        ) VALUES
-        <foreach collection="collection" item="item" index="index"
-                 separator=",">
-            (
-            #{item.id},
-            #{item.code},
-            #{item.name},
-            #{item.status},
-            #{item.creator},
-            now(),
-            #{item.modifier},
-            now(),
-            #{item.version}
-            )
-        </foreach>
-    </insert>
     <update id="update" parameterType="com.xiaoqiaoli.domain.RoleDO">
         UPDATE mdc_role
         <set>
@@ -101,19 +82,6 @@
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
-    </update>
-    <update id="batchUpdate" parameterType="java.util.Map">
-        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
-            UPDATE mdc_role
-            <set>
-                CODE = #{item.code},
-                NAME = #{item.name},
-                MODIFIER = #{item.modifier},
-                MODIFIED = now(),
-                VERSION = #{item.version} + 1
-            </set>
-            WHERE ID = #{item.id} AND VERSION = #{item.version}
-        </foreach>
     </update>
     <delete id="delete" parameterType="com.xiaoqiaoli.domain.RoleDO">
         UPDATE mdc_role

@@ -19,43 +19,58 @@
         <result column="MODIFIER" property="modifier" jdbcType="VARCHAR"/>
         <result column="MODIFIED" property="modified" jdbcType="TIMESTAMP"/>
         <result column="VERSION" property="version" jdbcType="INTEGER"/>
+        <association property="corporation" column="CORPORATION_ID" javaType="com.xiaoqiaoli.domain.CorporationDO">
+            <result column="CORPORATION_ID" property="id" jdbcType="VARCHAR"></result>
+            <result column="CORPORATION_NAME" property="name" jdbcType="VARCHAR"></result>
+        </association>
+        <association property="organization" column="ORGANIZATION_ID" javaType="com.xiaoqiaoli.domain.OrganizationDO">
+            <result column="ORGANIZATION_ID" property="id" jdbcType="VARCHAR"></result>
+            <result column="ORGANIZATION_NAME" property="name" jdbcType="VARCHAR"></result>
+        </association>
     </resultMap>
-    <sql id="USER_COLUMNS">
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-    </sql>
     <select id="get" resultMap="BaseResultMap">
         SELECT
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-        FROM mdc_user
-        WHERE ID = #{id}
-        AND STATUS = 1
+        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
+        T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
+        FROM mdc_user T1
+        INNER JOIN mdc_corporation T2 ON T1.CORPORATION_ID = T2.ID AND T2.STATUS = 1
+        INNER JOIN mdc_organization T3 ON T1.ORGANIZATION_ID = T3.ID AND T3.STATUS = 1
+        WHERE T1.ID = #{id}
+        AND T1.STATUS = 1
     </select>
     <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.UserDO">
         SELECT
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-        FROM mdc_user
+        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
+        T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
+        FROM mdc_user T1
+        INNER JOIN mdc_corporation T2 ON T1.CORPORATION_ID = T2.ID AND T2.STATUS = 1
+        INNER JOIN mdc_organization T3 ON T1.ORGANIZATION_ID = T3.ID AND T3.STATUS = 1
+        FROM mdc_user T1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="email != null and email != ''">
-                EMAIL = #{email}
+                T1.EMAIL = #{email}
             </if>
             <if test="telephone != null and telephone != ''">
-                AND TELEPHONE = #{telephone}
+                AND T1.TELEPHONE = #{telephone}
             </if>
             <if test="qq != null and qq != ''">
-                AND QQ = #{qq}
+                AND T1.QQ = #{qq}
             </if>
             <if test="wx != null and wx != ''">
-                AND WX = #{wx}
+                AND T1.WX = #{wx}
             </if>
             <if test="weiBo != null and weiBo != ''">
-                AND WEI_BO = #{weiBo}
+                AND T1.WEI_BO = #{weiBo}
             </if>
-            AND STATUS = 1
+            AND T1.STATUS = 1
         </trim>
     </select>
     <select id="findByMultiIds" resultMap="BaseResultMap">
         SELECT
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED,
+        MODIFIER, MODIFIED, VERSION
         FROM mdc_user
         WHERE ID IN
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
@@ -65,33 +80,47 @@
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-        FROM mdc_user
+        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
+        T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
+        FROM mdc_user T1
+        INNER JOIN mdc_corporation T2 ON T1.CORPORATION_ID = T2.ID AND T2.STATUS = 1
+        INNER JOIN mdc_organization T3 ON T1.ORGANIZATION_ID = T3.ID AND T3.STATUS = 1
         <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="realName != null and realName != ''">
-                REAl_NAME LIKE CONCAT('%',#{realName},'%')
+                T1.REAl_NAME LIKE CONCAT('%',#{realName},'%')
             </if>
             <if test="email != null and email != ''">
-                AND EMAIL = #{email}
+                AND T1.EMAIL = #{email}
             </if>
             <if test="telephone != null and telephone != ''">
-                AND TELEPHONE = #{telephone}
+                AND T1.TELEPHONE = #{telephone}
             </if>
             <if test="qq != null and qq != ''">
-                AND QQ = #{qq}
+                AND T1.QQ = #{qq}
             </if>
             <if test="wx != null and wx != ''">
-                AND WX = #{wx}
+                AND T1.WX = #{wx}
             </if>
             <if test="weiBo != null and weiBo != ''">
-                AND WEI_BO = #{weiBo}
+                AND T1.WEI_BO = #{weiBo}
             </if>
-            AND STATUS = 1
+            <if test="corporation != null and corporation.id != null and corporation.id != ''">
+                AND T1.CORPORATION_ID = #{corporation.id}
+            </if>
+            AND T1.STATUS = 1
         </trim>
     </select>
     <insert id="insert" parameterType="com.xiaoqiaoli.domain.UserDO">
         INSERT INTO mdc_user(
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
+        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL,
+        <if test="corporation != null and corporation.id != null and corporation.id != ''">
+        CORPORATION_ID,
+        </if>
+        <if test="organization != null and organization.id != null and organization.id != ''">
+        ORGANIZATION_ID,
+        </if>
+        STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
         ) VALUES (
         #{id},
         #{realName},
@@ -104,6 +133,12 @@
         #{weiBo},
         #{photo},
         #{level},
+        <if test="corporation != null and corporation.id != null and corporation.id != ''">
+            #{corporation.id},
+        </if>
+        <if test="organization != null and organization.id != null and organization.id != ''">
+            #{organization.id},
+        </if>
         #{status},
         #{creator},
         now(),
@@ -111,33 +146,6 @@
         now(),
         #{version}
         );
-    </insert>
-    <insert id="batchInsert" parameterType="java.util.Map">
-        INSERT INTO MDC_ACCOUNT(
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED, MODIFIER, MODIFIED, VERSION
-        ) VALUES
-        <foreach collection="collection" item="item" index="index"
-                 separator=",">
-            (
-            #{item.id},
-            #{item.realName},
-            #{item.sex},
-            #{item.birthday},
-            #{item.telephone},
-            #{item.email},
-            #{item.qq},
-            #{item.wx},
-            #{item.weiBo},
-            #{item.photo},
-            #{item.level},
-            #{item.status},
-            #{item.creator},
-            now(),
-            #{item.modifier},
-            now(),
-            #{item.version}
-            )
-        </foreach>
     </insert>
     <update id="update" parameterType="com.xiaoqiaoli.domain.UserDO">
         UPDATE mdc_user
@@ -152,32 +160,17 @@
             WEI_BO = #{weiBo},
             PHOTO = #{photo},
             LEVEL = #{level},
+            <if test="corporation != null and corporation.id != null and corporation.id != ''">
+              CORPORATION_ID = #{corporation.id}
+            </if>
+            <if test="organization != null and organization.id != null and organization.id != ''">
+              ORGANIZATION_ID = #{organization.id}
+            </if>
             MODIFIER = #{modifier},
             MODIFIED = now(),
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
-    </update>
-    <update id="batchUpdate" parameterType="java.util.Map">
-        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
-            UPDATE mdc_user
-            <set>
-                REAl_NAME = #{item.realName},
-                SEX = #{item.sex},
-                BIRTHDAY = #{item.birthday},
-                TELEPHONE = #{item.telephone},
-                EMAIL = #{item.email},
-                QQ = #{item.qq},
-                WX = #{item.wx},
-                WEI_BO = #{item.weiBo},
-                PHOTO = #{item.photo},
-                LEVEL = #{item.level},
-                MODIFIER = #{item.modifier},
-                MODIFIED = now(),
-                VERSION = #{item.version} + 1
-            </set>
-            WHERE ID = #{item.id} AND VERSION = #{item.version}
-        </foreach>
     </update>
     <delete id="delete" parameterType="com.xiaoqiaoli.domain.UserDO">
         UPDATE mdc_user

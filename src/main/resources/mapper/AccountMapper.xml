@@ -107,39 +107,6 @@
         #{version}
         );
     </insert>
-    <insert id="batchInsert" parameterType="java.util.Map">
-        INSERT INTO mdc_account(
-        ID,
-        USERNAME,
-        PASSWORD,
-        <if test="user != null">
-            USER_ID,
-        </if>
-        STATUS,
-        CREATOR_ID,
-        CREATED,
-        MODIFIER_ID,
-        MODIFIED,
-        VERSION
-        ) VALUES
-        <foreach collection="collection" item="item" index="index"
-                 separator=",">
-            (
-            #{item.id},
-            #{item.username},
-            #{item.password},
-            <if test="item.user != null">
-                #{item.user.id},
-            </if>
-            #{item.status},
-            #{item.creator},
-            now(),
-            #{item.modifier},
-            now(),
-            #{item.version}
-            )
-        </foreach>
-    </insert>
     <update id="update" parameterType="com.xiaoqiaoli.domain.AccountDO">
         UPDATE mdc_account
         <set>
@@ -162,21 +129,6 @@
             VERSION = #{version} + 1
         </set>
         WHERE ID = #{id} AND VERSION = #{version}
-    </update>
-    <update id="batchUpdate" parameterType="java.util.Map">
-        <foreach collection="collection" item="item" index="index" open="" close="" separator=";">
-            UPDATE mdc_account
-            <set>
-                USERNAME = #{item.username},
-                <if test="item.user != null">
-                    USER_ID = #{item.user.id},
-                </if>
-                MODIFIER = #{item.modifier},
-                MODIFIED = now(),
-                VERSION = #{item.version} + 1
-            </set>
-            WHERE ID = #{item.id} AND VERSION = #{item.version}
-        </foreach>
     </update>
     <delete id="delete" parameterType="com.xiaoqiaoli.domain.AccountDO">
         UPDATE mdc_account

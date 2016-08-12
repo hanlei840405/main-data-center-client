@@ -72,24 +72,6 @@ public abstract class BaseManager<T, V extends Serializable> {
     }
 
     /**
-     * 批量新增
-     *
-     * @param collection
-     * @return
-     */
-    public int batchInsert(List<T> collection) {
-        try {
-            Map<String, Object> params = new HashMap<>();
-            params.put("collection", collection);
-            return getBaseMapper().batchInsert(params);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            LOGGER.error("批量新增数据出错，参数：{}", collection);
-            return 0;
-        }
-    }
-
-    /**
      * 修改数据
      *
      * @param t
@@ -101,24 +83,6 @@ public abstract class BaseManager<T, V extends Serializable> {
         } catch (RuntimeException e) {
             e.printStackTrace();
             LOGGER.error("修改数据出错，参数：{}", t);
-            return 0;
-        }
-    }
-
-    /**
-     * 批量修改
-     *
-     * @param collection
-     * @return
-     */
-    public int batchUpdate(List<T> collection) {
-        try {
-            Map<String, Object> params = new HashMap<>();
-            params.put("collection", collection);
-            return getBaseMapper().batchUpdate(params);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            LOGGER.error("批量修改数据出错，参数：{}", collection);
             return 0;
         }
     }

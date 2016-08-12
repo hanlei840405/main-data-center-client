@@ -19,6 +19,7 @@ $(document).ready(function () {
                     option.append(cities[i].name);
                     $('#cityCode').append(option);
                 }
+                //$('#cityCode').next('.bootstrap-select').remove();
                 flushComponents();
             }
         });

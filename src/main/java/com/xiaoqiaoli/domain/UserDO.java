@@ -32,4 +32,6 @@ public class UserDO extends BaseDO implements Serializable {
     private String photo;
 
     private Level level;
+
+    private CorporationDO corporation;
 }
