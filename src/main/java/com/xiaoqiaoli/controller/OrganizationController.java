@@ -15,13 +15,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hanlei6 on 2016/7/20.
@@ -45,6 +44,25 @@ public class OrganizationController extends BaseController<OrganizationDO> {
         page = organizationService.localPage(page, parentId);
         model.addAttribute("page", page);
         return "organization/index";
+    }
+
+    @RequestMapping("/tree")
+    public
+    @ResponseBody
+    List<Map<String, Object>> tree(String id) {
+        if (StringUtils.isEmpty(id)) {
+            id = "0";
+        }
+        List<OrganizationDO> organizations = organizationService.localFindByParent(id);
+        List<Map<String, Object>> results = new ArrayList<>();
+        organizations.forEach(organizationDO -> {
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", organizationDO.getId());
+            result.put("name", organizationDO.getName());
+            result.put("isParent", true);
+            results.add(result);
+        });
+        return results;
     }
 
     @RequestMapping("/add")

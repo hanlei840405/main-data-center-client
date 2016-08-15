@@ -27,11 +27,7 @@ public interface UserLocalService {
 
     UserDO insert(UserDO userDO);
 
-    int batchInsert(List<UserDO> userDOs);
-
     UserDO update(UserDO userDO);
-
-    int batchUpdate(List<UserDO> userDOs);
 
     int delete(String id);
 

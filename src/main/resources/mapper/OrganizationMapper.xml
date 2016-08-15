@@ -3,8 +3,8 @@
 <mapper namespace="com.xiaoqiaoli.mapper.OrganizationMapper">
     <resultMap id="BaseResultMap" type="com.xiaoqiaoli.domain.OrganizationDO">
         <id column="ID" property="id" jdbcType="VARCHAR"/>
-        <result column="CODE" property="realName" jdbcType="VARCHAR"/>
-        <result column="NAME" property="sex" jdbcType="VARCHAR"/>
+        <result column="CODE" property="code" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
         <result column="FULL_CODE" property="fullCode" jdbcType="VARCHAR"/>
         <result column="FULL_NAME" property="fullName" jdbcType="VARCHAR"/>
         <result column="LEVEL" property="level" jdbcType="INTEGER"/>
@@ -16,7 +16,6 @@
         <result column="VERSION" property="version" jdbcType="INTEGER"/>
         <association property="user" column="USER_ID" javaType="com.xiaoqiaoli.domain.UserDO">
             <id column="USER_ID" property="id" jdbcType="VARCHAR"/>
-            <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
             <result column="REAL_NAME" property="realName" jdbcType="VARCHAR"/>
         </association>
         <association property="organization" column="ORGANIZATION_ID" javaType="com.xiaoqiaoli.domain.OrganizationDO">
@@ -33,7 +32,7 @@
         SELECT
         T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
         T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
-        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
         INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
@@ -45,7 +44,7 @@
         SELECT
         T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
         T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
-        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
         INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
@@ -67,7 +66,7 @@
         SELECT
         T1.ID, T1.CODE, T1.NAME, T1.FULL_CODE, T1.FULL_NAME, T1.LEVEL, T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER,
         T1.MODIFIED, T1.VERSION, T1.ORGANIZATION_ID, T2.CODE AS ORGANIZATION_CODE, T2.NAME AS ORGANIZATION_NAME,
-        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.USERNAME, T4.REAL_NAME
+        T1.CORPORATION_ID, T3.NAME AS CORPORATION_NAME, T1.USER_ID, T4.REAL_NAME
         FROM mdc_organization T1
         LEFT JOIN mdc_organization T2 ON T1.ORGANIZATION_ID = T2.ID
         INNER JOIN mdc_corporation T3 ON T1.CORPORATION_ID = T3.ID AND T3.STATUS = 1
@@ -80,16 +79,10 @@
                 AND T1.FULL_CODE LIKE CONCAT('%', #{fullCode}, '%')
             </if>
             <if test="parentId != null and parentId != ''">
-                AND T2.ID = #{parentId}
-            </if>
-            <if test="parentId == null">
-                AND T2.ID = '0'
+                AND T1.ORGANIZATION_ID = #{parentId}
             </if>
             <if test="corporationCode != null and corporationCode != ''">
                 AND T3.CODE = #{corporationCode}
-            </if>
-            <if test="username != null and username != ''">
-                AND t4.USERNAME = #{username}
             </if>
             AND T1.STATUS = 1
         </trim>

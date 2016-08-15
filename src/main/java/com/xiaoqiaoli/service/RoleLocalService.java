@@ -18,11 +18,7 @@ public interface RoleLocalService {
 
     int insert(RoleDO roleDO);
 
-    int batchInsert(List<RoleDO> roleDOs);
-
     int update(RoleDO roleDO);
-
-    int batchUpdate(List<RoleDO> roleDOs);
 
     int delete(RoleDO roleDO);
 

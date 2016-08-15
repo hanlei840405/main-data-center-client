@@ -51,20 +51,9 @@ public class RoleServiceImpl implements RoleLocalService {
     }
 
     @Override
-    public int batchInsert(List<RoleDO> roleDOs) {
-        return roleManager.batchInsert(roleDOs);
-    }
-
-    @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
     public int update(RoleDO roleDO) {
         return roleManager.update(roleDO);
-    }
-
-    @Override
-    @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int batchUpdate(List<RoleDO> roleDOs) {
-        return roleManager.batchUpdate(roleDOs);
     }
 
     @Override

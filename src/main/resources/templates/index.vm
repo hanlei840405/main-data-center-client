@@ -161,15 +161,27 @@
                     <span class="menu-item">Dashboard</span>
                 </a>
             </li>
-            <li>
-                <a class="sa-side-typography" href="javascript:void(0)" onclick="loadModule('/corporation/index?pageNum=1&pageSize=10')">
-                    <span class="menu-item">企业信息</span>
+            <li class="dropdown">
+                <a class="sa-side-form" href="">
+                    <span class="menu-item">人资主数据</span>
                 </a>
-            </li>
-            <li>
-                <a class="sa-side-typography" href="javascript:void(0)" onclick="loadModule('/user/index?pageNum=1&pageSize=10')">
-                    <span class="menu-item">用户信息</span>
-                </a>
+                <ul class="list-unstyled menu-item">
+                    <li>
+                        <a href="javascript:void(0)" onclick="loadModule('/corporation/index?pageNum=1&pageSize=10')">
+                            企业信息
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" onclick="loadModule('/organization/index?pageNum=1&pageSize=10')">
+                            部门信息
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" onclick="loadModule('/user/index?pageNum=1&pageSize=10')">
+                            用户信息
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li>
                 <a class="sa-side-widget" href="content-widgets.html">

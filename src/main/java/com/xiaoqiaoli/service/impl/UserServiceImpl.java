@@ -93,12 +93,6 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
 
     @Override
     @Transactional
-    public int batchInsert(List<UserDO> userDOs) {
-        return userManager.batchInsert(userDOs);
-    }
-
-    @Override
-    @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
     public UserDO update(UserDO userDO) {
         int result = userManager.update(userDO);
@@ -106,13 +100,6 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
             return userManager.get(userDO.getId());
         }
         return null;
-    }
-
-    @Override
-    @Transactional
-    @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public int batchUpdate(List<UserDO> userDOs) {
-        return userManager.batchUpdate(userDOs);
     }
 
     @Override
