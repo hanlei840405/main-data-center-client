@@ -75,9 +75,9 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
-    public Page<UserDO> localPage(Page<UserDO> page, String realName, String telephone, String qq, String wx, String weiBo) {
+    public Page<UserDO> localPage(Page<UserDO> page, String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<UserDO> userDOs = (Page<UserDO>) userManager.findByParams(realName, telephone, qq, wx, weiBo);
+        Page<UserDO> userDOs = (Page<UserDO>) userManager.findByParams(realName, telephone, qq, wx, weiBo, corporationId, organizationId);
         return userDOs;
     }
 

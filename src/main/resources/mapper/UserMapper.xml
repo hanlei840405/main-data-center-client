@@ -105,8 +105,11 @@
             <if test="weiBo != null and weiBo != ''">
                 AND T1.WEI_BO = #{weiBo}
             </if>
-            <if test="corporation != null and corporation.id != null and corporation.id != ''">
-                AND T1.CORPORATION_ID = #{corporation.id}
+            <if test="corporationId != null and corporationId != ''">
+                AND T1.CORPORATION_ID = #{corporationId}
+            </if>
+            <if test="organizationId != null and organizationId != ''">
+                AND T1.ORGANIZATION_ID = #{organizationId}
             </if>
             AND T1.STATUS = 1
         </trim>

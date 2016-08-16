@@ -54,9 +54,19 @@ public class UserController extends BaseController<UserDO> {
         Page<UserDO> page = new Page<>();
         page.setPageNum(pageNum);
         page.setPageSize(pageSize);
-        page = userService.localPage(page, null, null, null, null, null);
+        page = userService.localPage(page, null, null, null, null, null, null, null);
         model.addAttribute("page", page);
         return "user/index";
+    }
+
+    @RequestMapping("/select")
+    public String select(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, String organizationId, Model model) {
+        Page<UserDO> page = new Page<>();
+        page.setPageNum(pageNum);
+        page.setPageSize(pageSize);
+        page = userService.localPage(page, null, null, null, null, null, null, organizationId);
+        model.addAttribute("page", page);
+        return "user/select";
     }
 
     @RequestMapping("/add")
@@ -86,7 +96,7 @@ public class UserController extends BaseController<UserDO> {
         Page<UserDO> page = new Page<>();
         page.setPageNum(pageNum);
         page.setPageSize(pageSize);
-        return userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo());
+        return userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

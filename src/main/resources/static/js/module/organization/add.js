@@ -1,34 +1,31 @@
-/**
- * Created by hanlei6 on 2016/8/2.
- */
+var organizationTreeForSelectUser;
 $(document).ready(function () {
-    flushComponents();
-    flushCheckboxRadio();
-    //$('#birthday').datetimepicker({
-    //    pickTime: false
-    //});
-    $('#birthday').datetimepicker({
-        timepicker: false,
-        format: 'Y-m-d'//,
-        //formatDate: 'Y/m/d'
-    });
-
-    $('#user-add-submit').bind('click', function () {
-        $.ajax({
-            url: '/user/save',
-            type: 'POST',
-            data: new FormData($('#user-add-form')[0]),
-            processData: false,
-            contentType: false,
-            success: function (res) {
-                if (res.status == 200) {
-                    var pageSize = $('.page-size').val();
-                    loadModule('/user/index?pageNum=1&pageSize=' + pageSize);
-                    closeModuleInModal('formModal');
-                } else {
-
-                }
+    organizationTreeForSelectUser = $.fn.zTree.init($("#organizationTreeForSelectUser"), {
+        view: {
+            selectedMulti: false
+        },
+        async: {
+            enable: true,
+            url: "../organization/tree",
+            autoParam: ["id"]
+        },
+        callback: {
+            onClick: function (event, treeId, treeNode) {
+                loadModule('/user/select?pageNum=1&pageSize=10&organizationId=' + treeNode.id, 'user-select-grid');
             }
-        });
+        }
+    });
+    $('#selectUserModal').on('show.bs.modal', function () {
+        var nodes = organizationTreeForSelectUser.getNodes();
+        if (nodes.length > 0) {
+            loadModule('/user/select?pageNum=1&pageSize=10&organizationId=' + nodes[0].id, 'user-select-grid');
+        } else {
+            loadModule('/user/select?pageNum=1&pageSize=10', 'user-select-grid');
+        }
     })
 });
+
+function selectUserCallback(id, name) {
+    $('#userId').val(id);
+    $('#username').val(name);
+}

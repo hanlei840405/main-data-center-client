@@ -1,4 +1,4 @@
-<div class="col-md-1" style="padding-left: 0;">
+<div class="col-md-2" style="padding-left: 0;">
     <select class="select page-size">
         <option #if($page.pageSize == 5)
                 selected
@@ -22,7 +22,7 @@
         </option>
     </select>
 </div>
-<div class="col-md-2">
+<div class="col-md-3">
     <h6>共${page.pages}页 / 共${page.total}条数据</h6>
 </div>
 <div class="btn-group pull-right">

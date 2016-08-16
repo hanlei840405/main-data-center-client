@@ -34,4 +34,6 @@ public class UserDO extends BaseDO implements Serializable {
     private Level level;
 
     private CorporationDO corporation;
+
+    private OrganizationDO organization;
 }

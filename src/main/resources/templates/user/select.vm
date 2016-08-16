@@ -1,0 +1,30 @@
+<table
+        class="table table-condensed table-hover table-striped tile list-container">
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>姓名</th>
+        <th>联系电话</th>
+        <th>邮箱</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+        #foreach($item in $page.result)
+        <tr>
+            <td>$!velocityCount</td>
+            <td>$!item.realName</td>
+            <td>$!item.telephone</td>
+            <td>$!item.email</td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-alt btn_select" value="$item.id" data="$!item.realName">选择
+                    </button>
+                </div>
+            </td>
+        </tr>
+        #end
+    </tbody>
+</table>
+#parse('/page.vm')
+<script src="js/module/user/select.js"></script>

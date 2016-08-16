@@ -1,6 +1,5 @@
 package com.xiaoqiaoli.controller;
 
-import com.github.pagehelper.Page;
 import com.xiaoqiaoli.domain.OrganizationDO;
 import com.xiaoqiaoli.service.OrganizationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
@@ -37,12 +36,7 @@ public class OrganizationController extends BaseController<OrganizationDO> {
     private GenerateIdRemoteService generateIdRemoteService;
 
     @RequestMapping("/index")
-    public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, String parentId, Model model) {
-        Page<OrganizationDO> page = new Page<>();
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        page = organizationService.localPage(page, parentId);
-        model.addAttribute("page", page);
+    public String index() {
         return "organization/index";
     }
 
@@ -93,7 +87,7 @@ public class OrganizationController extends BaseController<OrganizationDO> {
         organization.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
         organization.setCreator(principal.getUsername());
         organization.setModifier(principal.getUsername());
-        organization.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.CORPORATION.name()));
+        organization.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.ORGANIZATION.name()));
         OrganizationDO organizationDO = organizationService.insert(organization);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(organizationDO, result);

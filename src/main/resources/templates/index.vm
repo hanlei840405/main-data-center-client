@@ -1037,6 +1037,8 @@
 <script src="js/calendar.min.js"></script> <!-- Calendar -->
 <script src="js/feeds.min.js"></script> <!-- News Feeds -->
 <script src="js/chosen.min.js"></script> <!-- Custom Multi Select -->
+<script src="js/plugin/bootstrap-notify.min.js"></script> <!-- notify -->
+
 
 <script src="js/flush.js"></script>
 <!-- All JS functions -->

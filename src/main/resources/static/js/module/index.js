@@ -14,13 +14,13 @@ function loadModule(mapping, container) {
     }
 }
 
-function openModuleInModal(modal, mapping) {
-    $('#' + modal).modal({backdrop: 'static', keyboard: false});
-    $('#' + modal).load(mapping);
+function openModuleInModal(mapping, container) {
+    $('#' + container).modal({backdrop: 'static', keyboard: false});
+    $('#' + container).load(mapping);
 }
 
-function closeModuleInModal(modal) {
-    $('#' + modal).modal('hide');
+function closeModuleInModal(container) {
+    $('#' + container).modal('hide');
 }
 
 function pager(area, mapping, container) {

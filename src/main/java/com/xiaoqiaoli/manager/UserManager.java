@@ -63,13 +63,15 @@ public class UserManager extends BaseManager<UserDO, String> {
         return find(params);
     }
 
-    public List<UserDO> findByParams(String realName, String telephone, String qq, String wx, String weiBo) {
+    public List<UserDO> findByParams(String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
         Map<String, Object> params = new HashMap<>();
         params.put("realName", realName);
         params.put("telephone", telephone);
         params.put("qq", qq);
         params.put("wx", wx);
         params.put("weiBo", weiBo);
+        params.put("corporationId", corporationId);
+        params.put("organizationId", organizationId);
         return find(params);
     }
 

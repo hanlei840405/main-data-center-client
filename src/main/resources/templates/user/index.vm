@@ -1,15 +1,13 @@
-<style>
-</style>
+<ol class="breadcrumb">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">人资主数据</a></li>
+    <li class="active">用户列表</li>
+    <li><a href="javascript:void(0)" data-toggle="modal"
+           onclick="openModuleInModal('/user/add', 'formModal')">新增</a>
+    </li>
+    <li><a href="javascript:void(0)" onclick="deleteSelected()">删除</a></li>
+</ol>
 <div class="block-area">
-    <ol class="breadcrumb">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">人资主数据</a></li>
-        <li class="active">用户列表</li>
-        <li><a href="javascript:void(0)" data-toggle="modal"
-               onclick="openModuleInModal('formModal', '/user/add')">新增</a>
-        </li>
-        <li><a href="javascript:void(0)" onclick="deleteSelected()">删除</a></li>
-    </ol>
     <input class="input-sm col-md-4 message-search table-payload" type="text" placeholder="Search....">
     <table id="user-grid" class="table table-condensed table-hover table-striped tile list-container">
         <thead>
