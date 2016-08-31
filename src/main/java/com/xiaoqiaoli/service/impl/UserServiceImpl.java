@@ -2,7 +2,7 @@ package com.xiaoqiaoli.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.xiaoqiaoli.domain.UserDO;
+import com.xiaoqiaoli.entity.User;
 import com.xiaoqiaoli.dto.UserDTO;
 import com.xiaoqiaoli.manager.UserManager;
 import com.xiaoqiaoli.service.UserLocalService;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,56 +33,56 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
 
     @Override
     @Cacheable(cacheNames = "mdc:user:id", key = "'/userService/remoteGetByAccount/'.concat(#id)")
-    public UserDO localGet(String id) {
+    public User localGet(String id) {
         return userManager.get(id);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:realName", key = "'/userService/remoteGetByAccount/'.concat(#realName)")
-    public List<UserDO> localFindByRealName(String realName) {
+    public List<User> localFindByRealName(String realName) {
         return userManager.findByRealName(realName);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:email", key = "'/userService/remoteGetByAccount/'.concat(#email)")
-    public UserDO localGetByEmail(String email) {
+    public User localGetByEmail(String email) {
         return userManager.getByEmail(email);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:telephone", key = "'/userService/remoteGetByAccount/'.concat(#telephone)")
-    public UserDO localGetByTelephone(String telephone) {
+    public User localGetByTelephone(String telephone) {
         return userManager.getByTelephone(telephone);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:qq", key = "'/userService/remoteGetByAccount/'.concat(#qq)")
-    public UserDO localGetByQq(String qq) {
+    public User localGetByQq(String qq) {
         return userManager.getByQq(qq);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:wx", key = "'/userService/remoteGetByAccount/'.concat(#wx)")
-    public UserDO localGetByWx(String wx) {
+    public User localGetByWx(String wx) {
         return userManager.getByWx(wx);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:user:weiBo", key = "'/userService/remoteGetByAccount/'.concat(#weiBo)")
-    public UserDO localGetByWeiBo(String weiBo) {
+    public User localGetByWeiBo(String weiBo) {
         return userManager.getByWeiBo(weiBo);
     }
 
     @Override
-    public Page<UserDO> localPage(Page<UserDO> page, String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
+    public Page<User> localPage(Page<User> page, String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<UserDO> userDOs = (Page<UserDO>) userManager.findByParams(realName, telephone, qq, wx, weiBo, corporationId, organizationId);
+        Page<User> userDOs = (Page<User>) userManager.findByParams(realName, telephone, qq, wx, weiBo, corporationId, organizationId);
         return userDOs;
     }
 
     @Override
     @Transactional
-    public UserDO insert(UserDO userDO) {
+    public User insert(User userDO) {
         int result = userManager.insert(userDO);
         if (result > 0) {
             return userManager.get(userDO.getId());
@@ -94,7 +93,7 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     @Override
     @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public UserDO update(UserDO userDO) {
+    public User update(User userDO) {
         int result = userManager.update(userDO);
         if (result > 0) {
             return userManager.get(userDO.getId());
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
     public int batchDelete(String[] ids) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userManager.batchDelete(userManager.findByMultiIds(ids), principal.getUsername());
     }
 

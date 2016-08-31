@@ -1,8 +1,8 @@
 package com.xiaoqiaoli.manager;
 
-import com.xiaoqiaoli.domain.RoleDO;
-import com.xiaoqiaoli.mapper.BaseMapper;
-import com.xiaoqiaoli.mapper.RoleMapper;
+import com.xiaoqiaoli.entity.Role;
+import com.xiaoqiaoli.repository.BaseMapper;
+import com.xiaoqiaoli.repository.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,13 @@ import java.util.Map;
  * Created by hanlei6 on 2016/7/19.
  */
 @Component
-public class RoleManager extends BaseManager<RoleDO, String> {
+public class RoleManager extends BaseManager<Role, String> {
     private final static Logger LOGGER = LoggerFactory.getLogger(RoleManager.class);
     @Autowired
-    private RoleMapper roleMapper;
+    private RoleRepository roleMapper;
 
     @Override
-    BaseMapper<RoleDO, String> getBaseMapper() {
+    BaseMapper<Role, String> getBaseMapper() {
         threadLocal.set(roleMapper);
         return threadLocal.get();
     }
@@ -33,7 +33,7 @@ public class RoleManager extends BaseManager<RoleDO, String> {
      * @param code
      * @return
      */
-    public RoleDO getByCode(String code) {
+    public Role getByCode(String code) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("code", code);
         return getOne(queryParams);
@@ -45,7 +45,7 @@ public class RoleManager extends BaseManager<RoleDO, String> {
      * @param name
      * @return
      */
-    public List<RoleDO> findByName(String name) {
+    public List<Role> findByName(String name) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("name", name);
         return find(queryParams);
@@ -57,7 +57,7 @@ public class RoleManager extends BaseManager<RoleDO, String> {
      * @param username
      * @return
      */
-    public List<RoleDO> findByUsername(String username) {
+    public List<Role> findByUsername(String username) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("username", username);
         return find(queryParams);
@@ -69,7 +69,7 @@ public class RoleManager extends BaseManager<RoleDO, String> {
      * @param roleDO
      * @return
      */
-    public int connectAccount(RoleDO roleDO) {
+    public int connectAccount(Role roleDO) {
         return roleMapper.connectAccount(roleDO);
     }
 

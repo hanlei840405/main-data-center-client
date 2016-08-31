@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.service;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.CorporationDO;
+import com.xiaoqiaoli.entity.Corporation;
 
 import java.util.List;
 
@@ -9,19 +9,19 @@ import java.util.List;
  * Created by hanlei6 on 2016/8/7.
  */
 public interface CorporationLocalService {
-    CorporationDO localGet(String id);
+    Corporation localGet(String id);
 
-    List<CorporationDO> localFindByName(String name);
+    List<Corporation> localFindByName(String name);
 
-    List<CorporationDO> localFindByContact(String contact);
+    List<Corporation> localFindByContact(String contact);
 
-    List<CorporationDO> localFindByLegalPerson(String legalPerson);
+    List<Corporation> localFindByLegalPerson(String legalPerson);
 
-    Page<CorporationDO> localPage(Page<CorporationDO> page, String name, String contact, String legalPerson);
+    Page<Corporation> localPage(Page<Corporation> page, String name, String contact, String legalPerson);
 
-    CorporationDO insert(CorporationDO corporationDO);
+    Corporation insert(Corporation corporationDO);
 
-    CorporationDO update(CorporationDO corporationDO);
+    Corporation update(Corporation corporationDO);
 
     int batchEnable(String[] ids);
 
@@ -31,5 +31,5 @@ public interface CorporationLocalService {
 
     int batchDelete(String[] ids);
 
-    int adjust(CorporationDO corporationDO);
+    int adjust(Corporation corporationDO);
 }

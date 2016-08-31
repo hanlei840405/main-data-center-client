@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.service;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.OrganizationDO;
+import com.xiaoqiaoli.entity.Organization;
 
 import java.util.List;
 
@@ -9,23 +9,23 @@ import java.util.List;
  * Created by hanlei6 on 2016/8/12.
  */
 public interface OrganizationLocalService {
-    OrganizationDO localGet(String id);
+    Organization localGet(String id);
 
-    OrganizationDO localGetByCode(String code);
+    Organization localGetByCode(String code);
 
-    List<OrganizationDO> localFindByCorporation(String corporationId);
+    List<Organization> localFindByCorporation(String corporationId);
 
-    List<OrganizationDO> localFindByParent(String parentId);
+    List<Organization> localFindByParent(String parentId);
 
-    List<OrganizationDO> localFindByUsername(String username);
+    List<Organization> localFindByUsername(String username);
 
-    List<OrganizationDO> localFindByFullCode(String fullCode);
+    List<Organization> localFindByFullCode(String fullCode);
 
-    Page<OrganizationDO> localPage(Page<OrganizationDO> page, String parentId);
+    Page<Organization> localPage(Page<Organization> page, String parentId);
 
-    OrganizationDO insert(OrganizationDO corporationDO);
+    Organization insert(Organization corporationDO);
 
-    OrganizationDO update(OrganizationDO corporationDO);
+    Organization update(Organization corporationDO);
 
     int delete(String id);
 

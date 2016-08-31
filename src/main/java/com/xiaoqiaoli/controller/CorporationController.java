@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.controller;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.CorporationDO;
+import com.xiaoqiaoli.entity.Corporation;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/corporation")
-public class CorporationController extends BaseController<CorporationDO> {
+public class CorporationController extends BaseController<Corporation> {
     private final static Logger LOGGER = LoggerFactory.getLogger(CorporationController.class);
 
     @Autowired
@@ -48,8 +48,8 @@ public class CorporationController extends BaseController<CorporationDO> {
     private String imageDir;
 
     @RequestMapping("/index")
-    public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, CorporationDO corporation, Model model) {
-        Page<CorporationDO> page = new Page<>();
+    public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, Corporation corporation, Model model) {
+        Page<Corporation> page = new Page<>();
         page.setPageNum(pageNum);
         page.setPageSize(pageSize);
         page = corporationService.localPage(page, corporation.getName(), corporation.getContact(), corporation.getLegalPerson());
@@ -65,7 +65,7 @@ public class CorporationController extends BaseController<CorporationDO> {
 
     @RequestMapping("/view")
     public String view(@RequestParam("id") String id, Model model) {
-        CorporationDO corporation = corporationService.localGet(id);
+        Corporation corporation = corporationService.localGet(id);
         model.addAttribute("corporation", corporation);
         return "corporation/view";
     }
@@ -73,7 +73,7 @@ public class CorporationController extends BaseController<CorporationDO> {
     @RequestMapping("/edit")
     public String edit(@RequestParam("id") String id, Model model) {
         model.addAllAttributes(provincesAndCities());
-        CorporationDO corporation = corporationService.localGet(id);
+        Corporation corporation = corporationService.localGet(id);
         model.addAttribute("corporation", corporation);
         return "corporation/edit";
     }
@@ -82,7 +82,7 @@ public class CorporationController extends BaseController<CorporationDO> {
     public
     @ResponseBody
     Map<String, Object> save(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
-                             MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, CorporationDO corporation) {
+                             MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, Corporation corporation) {
         corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -90,7 +90,7 @@ public class CorporationController extends BaseController<CorporationDO> {
         corporation.setCreator(principal.getUsername());
         corporation.setModifier(principal.getUsername());
         corporation.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.CORPORATION.name()));
-        CorporationDO corporationDO = corporationService.insert(corporation);
+        Corporation corporationDO = corporationService.insert(corporation);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(corporationDO, result);
         return result;
@@ -100,11 +100,11 @@ public class CorporationController extends BaseController<CorporationDO> {
     public
     @ResponseBody
     Map<String, Object> update(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
-                               MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, CorporationDO corporation) {
+                               MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, Corporation corporation) {
         Map<String,Object> result = new HashMap<>();
         corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
-        CorporationDO exist = corporationService.localGet(corporation.getId());
+        Corporation exist = corporationService.localGet(corporation.getId());
         if(corporation.getVersion() != exist.getVersion()) {
             LOGGER.error("请求中参数版本与最新版本存在差异,保存失败,失败参数{}", corporation);
             super.buildResponseStatus(null, result);
@@ -139,7 +139,7 @@ public class CorporationController extends BaseController<CorporationDO> {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         exist.setModifier(principal.getUsername());
-        CorporationDO corporationDO = corporationService.update(exist);
+        Corporation corporationDO = corporationService.update(exist);
         buildResponseStatus(corporationDO, result);
         return result;
     }
@@ -167,8 +167,8 @@ public class CorporationController extends BaseController<CorporationDO> {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }
 
-    private CorporationDO uploadCopy(CorporationDO corporation, MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
-                                     MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile) {
+    private Corporation uploadCopy(Corporation corporation, MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
+                                   MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile) {
         // 营业执照副本
         if (logoFile != null && !logoFile.isEmpty()) {
             try {

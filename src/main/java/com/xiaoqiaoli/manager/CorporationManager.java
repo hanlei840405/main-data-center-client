@@ -1,8 +1,8 @@
 package com.xiaoqiaoli.manager;
 
-import com.xiaoqiaoli.domain.CorporationDO;
-import com.xiaoqiaoli.mapper.BaseMapper;
-import com.xiaoqiaoli.mapper.CorporationMapper;
+import com.xiaoqiaoli.entity.Corporation;
+import com.xiaoqiaoli.repository.BaseMapper;
+import com.xiaoqiaoli.repository.CorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.Map;
  * Created by hanlei6 on 2016/8/7.
  */
 @Component
-public class CorporationManager extends BaseManager<CorporationDO, String> {
+public class CorporationManager extends BaseManager<Corporation, String> {
     private final static Logger LOGGER = LoggerFactory.getLogger(CorporationManager.class);
 
     @Autowired
-    private CorporationMapper corporationMapper;
+    private CorporationRepository corporationMapper;
 
     @Override
-    BaseMapper<CorporationDO, String> getBaseMapper() {
+    BaseMapper<Corporation, String> getBaseMapper() {
         return corporationMapper;
     }
 
@@ -33,7 +33,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      * @param name
      * @return
      */
-    public List<CorporationDO> findByName(String name) {
+    public List<Corporation> findByName(String name) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("name", name);
         return this.find(queryParams);
@@ -45,7 +45,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      * @param contact
      * @return
      */
-    public List<CorporationDO> findByContact(String contact) {
+    public List<Corporation> findByContact(String contact) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("contact", contact);
         return this.find(queryParams);
@@ -57,7 +57,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      * @param legalPerson
      * @return
      */
-    public List<CorporationDO> findByLegalPerson(String legalPerson) {
+    public List<Corporation> findByLegalPerson(String legalPerson) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("legalPerson", legalPerson);
         return this.find(queryParams);
@@ -71,7 +71,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      * @param legalPerson
      * @return
      */
-    public List<CorporationDO> findByParams(String name, String contact, String legalPerson) {
+    public List<Corporation> findByParams(String name, String contact, String legalPerson) {
         Map<String, Object> queryParams = new HashMap<>();
         queryParams.put("name", name);
         queryParams.put("contact", contact);
@@ -88,7 +88,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      */
     public int enable(String[] ids, String modifier) {
         try {
-            List<CorporationDO> corporationDOs = findByMultiIds(ids);
+            List<Corporation> corporationDOs = findByMultiIds(ids);
             Map<String, Object> params = new HashMap<>();
             params.put("collection", corporationDOs);
             params.put("modifier", modifier);
@@ -109,7 +109,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      */
     public int disable(String[] ids, String modifier) {
         try {
-            List<CorporationDO> corporationDOs = findByMultiIds(ids);
+            List<Corporation> corporationDOs = findByMultiIds(ids);
             Map<String, Object> params = new HashMap<>();
             params.put("collection", corporationDOs);
             params.put("modifier", modifier);
@@ -127,7 +127,7 @@ public class CorporationManager extends BaseManager<CorporationDO, String> {
      * @param corporationDO
      * @return
      */
-    public int adjust(CorporationDO corporationDO) {
+    public int adjust(Corporation corporationDO) {
         try {
             return corporationMapper.adjust(corporationDO);
         } catch (RuntimeException e) {

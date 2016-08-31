@@ -2,7 +2,7 @@ package com.xiaoqiaoli.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.xiaoqiaoli.domain.OrganizationDO;
+import com.xiaoqiaoli.entity.Organization;
 import com.xiaoqiaoli.manager.OrganizationManager;
 import com.xiaoqiaoli.service.OrganizationLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,44 +22,44 @@ public class OrganizationServiceImpl implements OrganizationLocalService {
     private OrganizationManager organizationManager;
 
     @Override
-    public OrganizationDO localGet(String id) {
+    public Organization localGet(String id) {
         return organizationManager.get(id);
     }
 
     @Override
-    public OrganizationDO localGetByCode(String code) {
+    public Organization localGetByCode(String code) {
         return organizationManager.getByCode(code);
     }
 
     @Override
-    public List<OrganizationDO> localFindByCorporation(String corporationId) {
+    public List<Organization> localFindByCorporation(String corporationId) {
         return organizationManager.findByCorporation(corporationId);
     }
 
     @Override
-    public List<OrganizationDO> localFindByParent(String parentId) {
+    public List<Organization> localFindByParent(String parentId) {
         return organizationManager.findByParent(parentId);
     }
 
     @Override
-    public List<OrganizationDO> localFindByUsername(String username) {
+    public List<Organization> localFindByUsername(String username) {
         return organizationManager.findByUsername(username);
     }
 
     @Override
-    public List<OrganizationDO> localFindByFullCode(String fullCode) {
+    public List<Organization> localFindByFullCode(String fullCode) {
         return organizationManager.findByFullCode(fullCode);
     }
 
     @Override
-    public Page<OrganizationDO> localPage(Page<OrganizationDO> page, String parentId) {
+    public Page<Organization> localPage(Page<Organization> page, String parentId) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<OrganizationDO> organizationDOs = (Page<OrganizationDO>) organizationManager.findByParent(parentId);
+        Page<Organization> organizationDOs = (Page<Organization>) organizationManager.findByParent(parentId);
         return organizationDOs;
     }
 
     @Override
-    public OrganizationDO insert(OrganizationDO organizationDO) {
+    public Organization insert(Organization organizationDO) {
         int result = organizationManager.insert(organizationDO);
         if (result > 0) {
             return organizationManager.get(organizationDO.getId());
@@ -68,7 +68,7 @@ public class OrganizationServiceImpl implements OrganizationLocalService {
     }
 
     @Override
-    public OrganizationDO update(OrganizationDO organizationDO) {
+    public Organization update(Organization organizationDO) {
         int result = organizationManager.update(organizationDO);
         if (result > 0) {
             return organizationManager.get(organizationDO.getId());

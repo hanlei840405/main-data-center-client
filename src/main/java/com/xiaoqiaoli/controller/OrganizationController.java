@@ -1,6 +1,6 @@
 package com.xiaoqiaoli.controller;
 
-import com.xiaoqiaoli.domain.OrganizationDO;
+import com.xiaoqiaoli.entity.Organization;
 import com.xiaoqiaoli.service.OrganizationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -26,7 +26,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/organization")
-public class OrganizationController extends BaseController<OrganizationDO> {
+public class OrganizationController extends BaseController<Organization> {
     private final static Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @Autowired
@@ -47,7 +47,7 @@ public class OrganizationController extends BaseController<OrganizationDO> {
         if (StringUtils.isEmpty(id)) {
             id = "0";
         }
-        List<OrganizationDO> organizations = organizationService.localFindByParent(id);
+        List<Organization> organizations = organizationService.localFindByParent(id);
         List<Map<String, Object>> results = new ArrayList<>();
         organizations.forEach(organizationDO -> {
             Map<String, Object> result = new HashMap<>();
@@ -66,14 +66,14 @@ public class OrganizationController extends BaseController<OrganizationDO> {
 
     @RequestMapping("/view")
     public String view(@RequestParam("id") String id, Model model) {
-        OrganizationDO organization = organizationService.localGet(id);
+        Organization organization = organizationService.localGet(id);
         model.addAttribute("organization", organization);
         return "organization/view";
     }
 
     @RequestMapping("/edit")
     public String edit(@RequestParam("id") String id, Model model) {
-        OrganizationDO organization = organizationService.localGet(id);
+        Organization organization = organizationService.localGet(id);
         model.addAttribute("organization", organization);
         return "organization/edit";
     }
@@ -81,14 +81,14 @@ public class OrganizationController extends BaseController<OrganizationDO> {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> save(OrganizationDO organization) {
+    Map<String, Object> save(Organization organization) {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         organization.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
         organization.setCreator(principal.getUsername());
         organization.setModifier(principal.getUsername());
         organization.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.ORGANIZATION.name()));
-        OrganizationDO organizationDO = organizationService.insert(organization);
+        Organization organizationDO = organizationService.insert(organization);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(organizationDO, result);
         return result;
@@ -97,9 +97,9 @@ public class OrganizationController extends BaseController<OrganizationDO> {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> update(OrganizationDO organization) {
+    Map<String, Object> update(Organization organization) {
         Map<String, Object> result = new HashMap<>();
-        OrganizationDO exist = organizationService.localGet(organization.getId());
+        Organization exist = organizationService.localGet(organization.getId());
         if (organization.getVersion() != exist.getVersion()) {
             LOGGER.error("请求中参数版本与最新版本存在差异,保存失败,失败参数{}", organization);
             super.buildResponseStatus(null, result);
@@ -110,7 +110,7 @@ public class OrganizationController extends BaseController<OrganizationDO> {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         exist.setModifier(principal.getUsername());
-        OrganizationDO organizationDO = organizationService.update(exist);
+        Organization organizationDO = organizationService.update(exist);
         buildResponseStatus(organizationDO, result);
         return result;
     }

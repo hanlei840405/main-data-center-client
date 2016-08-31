@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.controller;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.UserDO;
+import com.xiaoqiaoli.entity.User;
 import com.xiaoqiaoli.service.UserLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -36,7 +35,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/user")
-public class UserController extends BaseController<UserDO> {
+public class UserController extends BaseController<User> {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -66,14 +65,14 @@ public class UserController extends BaseController<UserDO> {
 
     @RequestMapping("/view")
     public String view(@RequestParam("id") String id, Model model) {
-        UserDO user = userService.localGet(id);
+        User user = userService.localGet(id);
         model.addAttribute("user", user);
         return "user/view";
     }
 
     @RequestMapping("/edit")
     public String edit(@RequestParam("id") String id, Model model) {
-        UserDO user = userService.localGet(id);
+        User user = userService.localGet(id);
         model.addAttribute("user", user);
         return "user/edit";
     }
@@ -81,11 +80,11 @@ public class UserController extends BaseController<UserDO> {
     @RequestMapping(value = "/page")
     public
     @ResponseBody
-    Map<String,Object> page(@RequestParam("current") int current, @RequestParam("rowCount") int rowCount, UserDO user) {
-        Page<UserDO> page = new Page<>();
+    Map<String,Object> page(@RequestParam("current") int current, @RequestParam("rowCount") int rowCount, User user) {
+        Page<User> page = new Page<>();
         page.setPageNum(current);
         page.setPageSize(rowCount);
-        Page<UserDO> userDOs = userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
+        Page<User> userDOs = userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
         Map<String,Object> result = new HashMap<>();
         result.put("current", current);
         result.put("rowCount", rowCount);
@@ -97,7 +96,7 @@ public class UserController extends BaseController<UserDO> {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> save(@RequestParam("file") MultipartFile file, UserDO user, HttpServletRequest request) {
+    Map<String, Object> save(@RequestParam("file") MultipartFile file, User user, HttpServletRequest request) {
         if (!file.isEmpty()) {
             try {
                 String photo = user.getRealName() + file.getOriginalFilename() + request.getRemoteHost();
@@ -109,14 +108,14 @@ public class UserController extends BaseController<UserDO> {
         }
 
         Date createdAndModified = new Date();
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
         user.setCreator(principal.getUsername());
         user.setCreated(createdAndModified);
         user.setModifier(principal.getUsername());
         user.setModified(createdAndModified);
         user.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.USER.name()));
-        UserDO userDO = userService.insert(user);
+        User userDO = userService.insert(user);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(userDO, result);
         return result;
@@ -125,7 +124,7 @@ public class UserController extends BaseController<UserDO> {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map<String, Object> update(MultipartFile file, UserDO user, HttpServletRequest request) {
+    Map<String, Object> update(MultipartFile file, User user, HttpServletRequest request) {
         if (file != null && !file.isEmpty()) {
             try {
                 String photo = user.getRealName() + file.getOriginalFilename() + request.getRemoteHost();
@@ -136,17 +135,17 @@ public class UserController extends BaseController<UserDO> {
             }
         }
 
-        UserDO exist = userService.localGet(user.getId());
+        User exist = userService.localGet(user.getId());
         if (StringUtils.isEmpty(user.getPhoto())) {
             user.setPhoto(exist.getPhoto());
         }
         BeanUtils.copyProperties(user, exist, "creator", "created");
 
         Date modified = new Date();
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         exist.setModifier(principal.getUsername());
         exist.setModified(modified);
-        UserDO userDO = userService.update(exist);
+        User userDO = userService.update(exist);
         Map<String, Object> result = new HashMap<>();
         buildResponseStatus(userDO, result);
         return result;

@@ -1,15 +1,20 @@
-package com.xiaoqiaoli.domain;
+package com.xiaoqiaoli.entity;
 
 import com.xiaoqiaoli.enums.Level;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * Created by hanlei6 on 2016/8/6.
  */
-@Data
-public class CorporationDO extends BaseDO implements Serializable {
+@Entity(name = "mdc_corporation")
+@Setter
+@Getter
+public class Corporation extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 5508727728302380626L;
 
     private String category; // 0:个人, 1:企业

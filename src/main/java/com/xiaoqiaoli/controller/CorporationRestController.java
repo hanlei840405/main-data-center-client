@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.controller;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.CorporationDO;
+import com.xiaoqiaoli.entity.Corporation;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,8 +23,8 @@ public class CorporationRestController {
     private CorporationLocalService corporationService;
 
     @RequestMapping("/page")
-    public List<CorporationDO> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, CorporationDO corporation) {
-        Page<CorporationDO> page = new Page<>();
+    public List<Corporation> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, Corporation corporation) {
+        Page<Corporation> page = new Page<>();
         page.setPageNum(pageNum);
         page.setPageSize(pageSize);
         return corporationService.localPage(page, corporation.getName(), corporation.getContact(), corporation.getLegalPerson());

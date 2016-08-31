@@ -1,9 +1,8 @@
 package com.xiaoqiaoli.manager;
 
-import com.xiaoqiaoli.mapper.BaseMapper;
+import com.xiaoqiaoli.repository.BaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.io.Serializable;
 import java.util.HashMap;

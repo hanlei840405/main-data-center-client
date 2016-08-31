@@ -1,6 +1,6 @@
 package com.xiaoqiaoli.service;
 
-import com.xiaoqiaoli.domain.RoleDO;
+import com.xiaoqiaoli.entity.Role;
 
 import java.util.List;
 
@@ -8,23 +8,23 @@ import java.util.List;
  * Created by hanlei6 on 2016/7/19.
  */
 public interface RoleLocalService {
-    RoleDO get(String id);
+    Role get(String id);
 
-    RoleDO getByCode(String code);
+    Role getByCode(String code);
 
-    List<RoleDO> findByName(String name);
+    List<Role> findByName(String name);
 
-    List<RoleDO> findByUsername(String username);
+    List<Role> findByUsername(String username);
 
-    int insert(RoleDO roleDO);
+    int insert(Role roleDO);
 
-    int update(RoleDO roleDO);
+    int update(Role roleDO);
 
-    int delete(RoleDO roleDO);
+    int delete(Role roleDO);
 
     int batchDelete(String[] ids);
 
-    int connectAccount(RoleDO roleDO);
+    int connectAccount(Role roleDO);
 
     int disConnectAccount(String roleId);
 }

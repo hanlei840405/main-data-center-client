@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.service.impl;
 
-import com.xiaoqiaoli.domain.AccountDO;
-import com.xiaoqiaoli.domain.RoleDO;
+import com.xiaoqiaoli.entity.Account;
+import com.xiaoqiaoli.entity.Role;
 import com.xiaoqiaoli.service.AccountLocalService;
 import com.xiaoqiaoli.service.RoleLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,14 @@ public class ChocolateUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountDO accountDO = accountService.localGetByUsername(username);
+        Account accountDO = accountService.localGetByUsername(username);
         if (ObjectUtils.isEmpty(accountDO)) {
             throw new UsernameNotFoundException("用户[" + username + "] 不存在");
         }
         if (ObjectUtils.isEmpty(accountDO.getUser())) {
             throw new UsernameNotFoundException("用户[" + username + "] 未绑定人员信息");
         }
-        List<RoleDO> roleDOs = roleService.findByUsername(username);
+        List<Role> roleDOs = roleService.findByUsername(username);
         List<SimpleGrantedAuthority> auths = new java.util.ArrayList<>();
         roleDOs.forEach(roleDO -> auths.add(new SimpleGrantedAuthority(roleDO.getCode())));
 

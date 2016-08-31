@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.controller;
 
 import com.github.pagehelper.Page;
-import com.xiaoqiaoli.domain.UserDO;
+import com.xiaoqiaoli.entity.User;
 import com.xiaoqiaoli.service.UserLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +22,10 @@ public class UserRestController {
 
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     public Map<String,Object> page(@RequestParam("current") int current, @RequestParam("rowCount") int rowCount, int draw) {
-        Page<UserDO> page = new Page<>();
+        Page<User> page = new Page<>();
         page.setPageNum(current);
         page.setPageSize(rowCount);
-        Page<UserDO> userDOs = userService.localPage(page, null, null, null, null, null, null, null);
+        Page<User> userDOs = userService.localPage(page, null, null, null, null, null, null, null);
         Map<String,Object> result = new HashMap<>();
         result.put("current", current);
         result.put("rowCount", rowCount);

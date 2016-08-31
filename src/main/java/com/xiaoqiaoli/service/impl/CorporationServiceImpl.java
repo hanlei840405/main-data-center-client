@@ -2,7 +2,7 @@ package com.xiaoqiaoli.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.xiaoqiaoli.domain.CorporationDO;
+import com.xiaoqiaoli.entity.Corporation;
 import com.xiaoqiaoli.dto.CorporationDTO;
 import com.xiaoqiaoli.manager.CorporationManager;
 import com.xiaoqiaoli.service.CorporationLocalService;
@@ -36,37 +36,37 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Override
     @Cacheable(cacheNames = "mdc:corporation:id", key = "'/corporationService/localGet/'.concat(#id)")
-    public CorporationDO localGet(String id) {
+    public Corporation localGet(String id) {
         return corporationManager.get(id);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:corporation:name", key = "'/corporationService/localFindByName/'.concat(#name)")
-    public List<CorporationDO> localFindByName(String name) {
+    public List<Corporation> localFindByName(String name) {
         return corporationManager.findByName(name);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:corporation:contact", key = "'/corporationService/localFindByContact/'.concat(#contact)")
-    public List<CorporationDO> localFindByContact(String contact) {
+    public List<Corporation> localFindByContact(String contact) {
         return corporationManager.findByContact(contact);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:corporation:legalPerson", key = "'/corporationService/localFindByLegalPerson/'.concat(#legalPerson)")
-    public List<CorporationDO> localFindByLegalPerson(String legalPerson) {
+    public List<Corporation> localFindByLegalPerson(String legalPerson) {
         return corporationManager.findByLegalPerson(legalPerson);
     }
 
     @Override
-    public Page<CorporationDO> localPage(Page<CorporationDO> page, String name, String contact, String legalPerson) {
+    public Page<Corporation> localPage(Page<Corporation> page, String name, String contact, String legalPerson) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<CorporationDO> corporationDOs = (Page<CorporationDO>) corporationManager.findByParams(name, contact, legalPerson);
+        Page<Corporation> corporationDOs = (Page<Corporation>) corporationManager.findByParams(name, contact, legalPerson);
         return corporationDOs;
     }
 
     @Override
-    public CorporationDO insert(CorporationDO corporationDO) {
+    public Corporation insert(Corporation corporationDO) {
         int result = corporationManager.insert(corporationDO);
         if (result > 0) {
             return corporationManager.get(corporationDO.getId());
@@ -76,7 +76,7 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public CorporationDO update(CorporationDO corporationDO) {
+    public Corporation update(Corporation corporationDO) {
         int result = corporationManager.update(corporationDO);
         if (result > 0) {
             return corporationManager.get(corporationDO.getId());
@@ -113,7 +113,7 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Override
     @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
-    public int adjust(CorporationDO corporationDO) {
+    public int adjust(Corporation corporationDO) {
         return corporationManager.adjust(corporationDO);
     }
 

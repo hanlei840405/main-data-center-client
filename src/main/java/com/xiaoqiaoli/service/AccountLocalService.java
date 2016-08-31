@@ -1,15 +1,15 @@
 package com.xiaoqiaoli.service;
 
-import com.xiaoqiaoli.domain.AccountDO;
+import com.xiaoqiaoli.entity.Account;
 
 /**
  * Created by hanlei6 on 2016/7/14.
  */
 public interface AccountLocalService {
 
-    AccountDO localGet(String id);
+    Account localGet(String id);
 
-    AccountDO localGetByUsername(String username);
+    Account localGetByUsername(String username);
 
-    AccountDO localGetByUserId(String userId);
+    Account localGetByUserId(String userId);
 }

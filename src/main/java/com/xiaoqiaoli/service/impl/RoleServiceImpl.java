@@ -1,6 +1,6 @@
 package com.xiaoqiaoli.service.impl;
 
-import com.xiaoqiaoli.domain.RoleDO;
+import com.xiaoqiaoli.entity.Role;
 import com.xiaoqiaoli.manager.RoleManager;
 import com.xiaoqiaoli.service.RoleLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,42 +23,42 @@ public class RoleServiceImpl implements RoleLocalService {
 
     @Override
     @Cacheable(cacheNames = "mdc:role:id", key = "'/roleService/get/'.concat(#id)")
-    public RoleDO get(String id) {
+    public Role get(String id) {
         return roleManager.get(id);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:role:code", key = "'/roleService/getByCode/'.concat(#code)")
-    public RoleDO getByCode(String code) {
+    public Role getByCode(String code) {
         return roleManager.getByCode(code);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:role:name", key = "'/roleService/findByName/'.concat(#name)")
-    public List<RoleDO> findByName(String name) {
+    public List<Role> findByName(String name) {
         return roleManager.findByName(name);
     }
 
     @Override
     @Cacheable(cacheNames = "mdc:role:username", key = "'/roleService/findByUsername/'.concat(#username)")
-    public List<RoleDO> findByUsername(String username) {
+    public List<Role> findByUsername(String username) {
         return roleManager.findByUsername(username);
     }
 
     @Override
-    public int insert(RoleDO roleDO) {
+    public int insert(Role roleDO) {
         return roleManager.insert(roleDO);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int update(RoleDO roleDO) {
+    public int update(Role roleDO) {
         return roleManager.update(roleDO);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int delete(RoleDO roleDO) {
+    public int delete(Role roleDO) {
         return roleManager.delete(roleDO);
     }
 
@@ -71,7 +71,7 @@ public class RoleServiceImpl implements RoleLocalService {
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int connectAccount(RoleDO roleDO) {
+    public int connectAccount(Role roleDO) {
         return roleManager.connectAccount(roleDO);
     }
 
