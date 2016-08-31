@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,22 +49,13 @@ public class UserController extends BaseController<UserDO> {
     private String imageDir;
 
     @RequestMapping("/index")
-    public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, Model model) {
-        Page<UserDO> page = new Page<>();
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        page = userService.localPage(page, null, null, null, null, null, null, null);
-        model.addAttribute("page", page);
+    public String index() {
         return "user/index";
     }
 
     @RequestMapping("/select")
-    public String select(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, String organizationId, Model model) {
-        Page<UserDO> page = new Page<>();
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        page = userService.localPage(page, null, null, null, null, null, null, organizationId);
-        model.addAttribute("page", page);
+    public String select(String organizationId, Model model) {
+        model.addAttribute("model", organizationId);
         return "user/select";
     }
 
@@ -88,15 +78,20 @@ public class UserController extends BaseController<UserDO> {
         return "user/edit";
     }
 
-    @Deprecated
-    @RequestMapping(value = "/page", method = RequestMethod.POST)
+    @RequestMapping(value = "/page")
     public
     @ResponseBody
-    List<UserDO> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, UserDO user) {
+    Map<String,Object> page(@RequestParam("current") int current, @RequestParam("rowCount") int rowCount, UserDO user) {
         Page<UserDO> page = new Page<>();
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        return userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
+        page.setPageNum(current);
+        page.setPageSize(rowCount);
+        Page<UserDO> userDOs = userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
+        Map<String,Object> result = new HashMap<>();
+        result.put("current", current);
+        result.put("rowCount", rowCount);
+        result.put("total", userDOs.getTotal());
+        result.put("rows", userDOs.getResult());
+        return result;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

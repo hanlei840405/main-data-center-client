@@ -15,7 +15,7 @@ public class UserDO extends BaseDO implements Serializable {
 
     private String realName;
 
-    private String sex;
+    private String gender;
 
     private Date birthday;
 

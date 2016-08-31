@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.xiaoqiaoli.domain.UserDO">
         <id column="ID" property="id" jdbcType="VARCHAR"/>
         <result column="REAl_NAME" property="realName" jdbcType="VARCHAR"/>
-        <result column="SEX" property="sex" jdbcType="VARCHAR"/>
+        <result column="GENDER" property="gender" jdbcType="VARCHAR"/>
         <result column="BIRTHDAY" property="birthday" jdbcType="DATE"/>
         <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR"/>
         <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
@@ -30,7 +30,7 @@
     </resultMap>
     <select id="get" resultMap="BaseResultMap">
         SELECT
-        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.ID, T1.REAL_NAME, T1.GENDER, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
         T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
         T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
         FROM mdc_user T1
@@ -41,7 +41,7 @@
     </select>
     <select id="getOne" resultMap="BaseResultMap" parameterType="com.xiaoqiaoli.domain.UserDO">
         SELECT
-        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.ID, T1.REAL_NAME, T1.GENDER, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
         T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
         T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
         FROM mdc_user T1
@@ -69,7 +69,7 @@
     </select>
     <select id="findByMultiIds" resultMap="BaseResultMap">
         SELECT
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED,
+        ID, REAL_NAME, GENDER, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL, STATUS, CREATOR, CREATED,
         MODIFIER, MODIFIED, VERSION
         FROM mdc_user
         WHERE ID IN
@@ -80,7 +80,7 @@
     </select>
     <select id="find" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        T1.ID, T1.REAL_NAME, T1.SEX, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
+        T1.ID, T1.REAL_NAME, T1.GENDER, T1.BIRTHDAY, T1.TELEPHONE, T1.EMAIL, T1.QQ, T1.WX, T1.WEI_BO, T1.PHOTO, T1.LEVEL,
         T1.STATUS, T1.CREATOR, T1.CREATED, T1.MODIFIER, T1.MODIFIED, T1.VERSION, T1.CORPORATION_ID, T1.ORGANIZATION_ID,
         T2.NAME AS CORPORATION_ID, T3.NAME AS ORGANIZATION_NAME
         FROM mdc_user T1
@@ -116,7 +116,7 @@
     </select>
     <insert id="insert" parameterType="com.xiaoqiaoli.domain.UserDO">
         INSERT INTO mdc_user(
-        ID, REAL_NAME, SEX, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL,
+        ID, REAL_NAME, GENDER, BIRTHDAY, TELEPHONE, EMAIL, QQ, WX, WEI_BO, PHOTO, LEVEL,
         <if test="corporation != null and corporation.id != null and corporation.id != ''">
         CORPORATION_ID,
         </if>
@@ -127,7 +127,7 @@
         ) VALUES (
         #{id},
         #{realName},
-        #{sex},
+        #{gender},
         #{birthday},
         #{telephone},
         #{email},
@@ -154,7 +154,7 @@
         UPDATE mdc_user
         <set>
             REAl_NAME = #{realName},
-            SEX = #{sex},
+            GENDER = #{gender},
             BIRTHDAY = #{birthday},
             TELEPHONE = #{telephone},
             EMAIL = #{email},

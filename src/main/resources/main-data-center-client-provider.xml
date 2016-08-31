@@ -25,8 +25,9 @@
     <!-- 使用multicast广播注册中心暴露服务地址 -->
     <dubbo:registry protocol="zookeeper" address="ubuntu01:2181" />
 
-    <!-- 用dubbo协议在20880端口暴露服务 -->
-    <dubbo:protocol name="dubbo" port="20881" />
+    <!-- 用dubbo协议在20880端口暴露服务
+    <dubbo:protocol name="dubbo" port="20880" /> -->
+    <dubbo:protocol name="dubbo" port="-1" />
 
     <dubbo:service interface="com.xiaoqiaoli.service.client.UserRemoteService" ref="userService"/>
 
