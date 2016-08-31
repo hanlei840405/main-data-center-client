@@ -1,30 +1,34 @@
 package com.xiaoqiaoli.manager;
 
+import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.Corporation;
-import com.xiaoqiaoli.repository.BaseMapper;
 import com.xiaoqiaoli.repository.CorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/8/7.
  */
 @Component
-public class CorporationManager extends BaseManager<Corporation, String> {
+public class CorporationManager {
     private final static Logger LOGGER = LoggerFactory.getLogger(CorporationManager.class);
 
     @Autowired
-    private CorporationRepository corporationMapper;
+    private CorporationRepository corporationRepository;
 
-    @Override
-    BaseMapper<Corporation, String> getBaseMapper() {
-        return corporationMapper;
+    /**
+     * 根据id查询企业信息
+     *
+     * @param id
+     * @return
+     */
+    public Corporation get(String id) {
+        return corporationRepository.findOne(id);
     }
 
     /**
@@ -34,9 +38,7 @@ public class CorporationManager extends BaseManager<Corporation, String> {
      * @return
      */
     public List<Corporation> findByName(String name) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("name", name);
-        return this.find(queryParams);
+        return corporationRepository.findByNameLike(name);
     }
 
     /**
@@ -46,9 +48,7 @@ public class CorporationManager extends BaseManager<Corporation, String> {
      * @return
      */
     public List<Corporation> findByContact(String contact) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("contact", contact);
-        return this.find(queryParams);
+        return corporationRepository.findByContactLike(contact);
     }
 
     /**
@@ -58,82 +58,40 @@ public class CorporationManager extends BaseManager<Corporation, String> {
      * @return
      */
     public List<Corporation> findByLegalPerson(String legalPerson) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("legalPerson", legalPerson);
-        return this.find(queryParams);
+        return corporationRepository.findByLegalPersonLike(legalPerson);
     }
 
     /**
-     * 根据企业名称,联系人,法人联合查询入驻企业信息
-     *
-     * @param name
-     * @param contact
-     * @param legalPerson
-     * @return
-     */
-    public List<Corporation> findByParams(String name, String contact, String legalPerson) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("name", name);
-        queryParams.put("contact", contact);
-        queryParams.put("legalPerson", legalPerson);
-        return this.find(queryParams);
-    }
-
-    /**
-     * 入驻企业变为状态正常
+     * 入驻企业变为状态正常/欠费禁用
      *
      * @param ids
      * @param modifier
      * @return
      */
-    public int enable(String[] ids, String modifier) {
+    public int enableOrDisable(String[] ids, Account modifier, String status) {
         try {
-            List<Corporation> corporationDOs = findByMultiIds(ids);
-            Map<String, Object> params = new HashMap<>();
-            params.put("collection", corporationDOs);
-            params.put("modifier", modifier);
-            return corporationMapper.batchEnable(params);
+            List<Corporation> corporations = corporationRepository.findByIdIn(ids);
+            for (Corporation corporation : corporations) {
+                corporation.setStatus(status);
+                corporation.setModifier(modifier);
+                corporation.setModified(new Date());
+            }
+            corporationRepository.save(corporations);
+            return 1;
         } catch (RuntimeException e) {
             e.printStackTrace();
-            LOGGER.error("入驻企业变为状态正常失败,参数为:{},{}", ids, modifier);
+            LOGGER.error("入驻企业变为状态正常失败,参数为:{},{},{}", ids, modifier, status);
             return 0;
         }
     }
 
-    /**
-     * 将入驻企业状态改变为欠费禁用
-     *
-     * @param ids
-     * @param modifier
-     * @return
-     */
-    public int disable(String[] ids, String modifier) {
+    public Corporation save(Corporation corporation) {
         try {
-            List<Corporation> corporationDOs = findByMultiIds(ids);
-            Map<String, Object> params = new HashMap<>();
-            params.put("collection", corporationDOs);
-            params.put("modifier", modifier);
-            return corporationMapper.batchDisable(params);
+            return corporationRepository.save(corporation);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            LOGGER.error("将入驻企业状态改变为欠费禁用失败,参数为:{},{}", ids, modifier);
-            return 0;
-        }
-    }
-
-    /**
-     * 根据入驻企业缴费情况，调整至相应会员级别
-     *
-     * @param corporationDO
-     * @return
-     */
-    public int adjust(Corporation corporationDO) {
-        try {
-            return corporationMapper.adjust(corporationDO);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            LOGGER.error("调整入驻企业等级失败,参数为:{},{}", corporationDO);
-            return 0;
+            LOGGER.error("入驻企业保存失败,参数为:{}", corporation);
+            return null;
         }
     }
 }

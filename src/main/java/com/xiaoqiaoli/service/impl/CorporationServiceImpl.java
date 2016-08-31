@@ -1,9 +1,9 @@
 package com.xiaoqiaoli.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.xiaoqiaoli.entity.Corporation;
 import com.xiaoqiaoli.dto.CorporationDTO;
+import com.xiaoqiaoli.entity.Account;
+import com.xiaoqiaoli.entity.Corporation;
+import com.xiaoqiaoli.manager.AccountManager;
 import com.xiaoqiaoli.manager.CorporationManager;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.CorporationRemoteService;
@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Autowired
     private CorporationManager corporationManager;
+
+    @Autowired
+    private AccountManager accountManager;
 
     @Override
     @Cacheable(cacheNames = "mdc:corporation:username", key = "'/corporationService/remoteGetByAccount/'.concat(#username)")
@@ -59,43 +63,35 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
-    public Page<Corporation> localPage(Page<Corporation> page, String name, String contact, String legalPerson) {
-        PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<Corporation> corporationDOs = (Page<Corporation>) corporationManager.findByParams(name, contact, legalPerson);
-        return corporationDOs;
+    public Page<Corporation> localPage(Page<Corporation> page, String payload) {
+        return null;
     }
 
     @Override
-    public Corporation insert(Corporation corporationDO) {
-        int result = corporationManager.insert(corporationDO);
-        if (result > 0) {
-            return corporationManager.get(corporationDO.getId());
-        }
-        return null;
+    public Corporation insert(Corporation corporation) {
+        return corporationManager.save(corporation);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public Corporation update(Corporation corporationDO) {
-        int result = corporationManager.update(corporationDO);
-        if (result > 0) {
-            return corporationManager.get(corporationDO.getId());
-        }
-        return null;
+    public Corporation update(Corporation corporation) {
+        return corporationManager.save(corporation);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int batchEnable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return corporationManager.enable(ids, principal.getUsername());
+        Account modifier = accountManager.getByUsername(principal.getUsername());
+        return corporationManager.enableOrDisable(ids, modifier, "3");
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
     public int batchDisable(String[] ids) {
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return corporationManager.disable(ids, principal.getUsername());
+        Account modifier = accountManager.getByUsername(principal.getUsername());
+        return corporationManager.enableOrDisable(ids, modifier, "1");
     }
 
     @Override

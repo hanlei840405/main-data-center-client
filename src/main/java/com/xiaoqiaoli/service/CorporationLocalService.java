@@ -1,7 +1,7 @@
 package com.xiaoqiaoli.service;
 
-import com.github.pagehelper.Page;
 import com.xiaoqiaoli.entity.Corporation;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ public interface CorporationLocalService {
 
     List<Corporation> localFindByLegalPerson(String legalPerson);
 
-    Page<Corporation> localPage(Page<Corporation> page, String name, String contact, String legalPerson);
+    Page<Corporation> localPage(Page<Corporation> page, String payload);
 
-    Corporation insert(Corporation corporationDO);
+    Corporation insert(Corporation corporation);
 
-    Corporation update(Corporation corporationDO);
+    Corporation update(Corporation corporation);
 
     int batchEnable(String[] ids);
 
@@ -31,5 +31,5 @@ public interface CorporationLocalService {
 
     int batchDelete(String[] ids);
 
-    int adjust(Corporation corporationDO);
+    int adjust(Corporation corporation);
 }
