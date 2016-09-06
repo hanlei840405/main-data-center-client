@@ -16,7 +16,7 @@ public class LoginController {
 //        if (csrfToken != null) {
 //            model.addAttribute("_csrf",csrfToken);
 //        }
-        return "login";
+        return "auth";
     }
 
     @RequestMapping("/login-error")

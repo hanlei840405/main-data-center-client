@@ -29,8 +29,8 @@ public class HomeController {
         WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 //        UserDO userDO = userService.localGet(id);
         System.out.println(webAuthenticationDetails.getSessionId());
-        Account accountDO = accountService.localGetByUsername(user.getUsername());
-        model.addAttribute("user", accountDO.getUser());
+        Account account = accountService.localGetByUsername(user.getUsername());
+        model.addAttribute("user", account.getUser());
         return "index";
     }
 

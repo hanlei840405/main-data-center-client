@@ -29,17 +29,17 @@ public class ChocolateUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account accountDO = accountService.localGetByUsername(username);
-        if (ObjectUtils.isEmpty(accountDO)) {
+        Account account = accountService.localGetByUsername(username);
+        if (ObjectUtils.isEmpty(account)) {
             throw new UsernameNotFoundException("用户[" + username + "] 不存在");
         }
-        if (ObjectUtils.isEmpty(accountDO.getUser())) {
+        if (ObjectUtils.isEmpty(account.getUser())) {
             throw new UsernameNotFoundException("用户[" + username + "] 未绑定人员信息");
         }
         List<Role> roleDOs = roleService.findByUsername(username);
         List<SimpleGrantedAuthority> auths = new java.util.ArrayList<>();
         roleDOs.forEach(roleDO -> auths.add(new SimpleGrantedAuthority(roleDO.getCode())));
 
-        return new User(accountDO.getUsername(),accountDO.getPassword(), auths);
+        return new User(account.getUsername(),account.getPassword(), auths);
     }
 }
