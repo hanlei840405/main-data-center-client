@@ -1,7 +1,8 @@
 package com.xiaoqiaoli.service;
 
-import com.github.pagehelper.Page;
 import com.xiaoqiaoli.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -23,16 +24,15 @@ public interface UserLocalService {
 
     User localGetByWeiBo(String weiBo);
 
-    Page<User> localPage(Page<User> page, String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId);
+    Page<User> localPage(Pageable pageable, String corporationId, String organizationId);
 
-    User insert(User userDO);
+    User insert(User user);
 
-    User update(User userDO);
+    User update(User user);
 
-    int delete(String id);
+    User delete(User user);
 
-    int batchDelete(String[] ids);
+    void batchDelete(List<User> users);
 
-    int disConnectRole(String userId);
-
+    List<User> localFindByIds(String[] ids);
 }

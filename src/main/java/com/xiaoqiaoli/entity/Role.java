@@ -4,8 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by hanlei6 on 2016/7/19.
@@ -21,5 +26,8 @@ public class Role extends BaseEntity implements Serializable {
 
     private String name;
 
-    private List<Account> accounts;
+    @ManyToMany
+    @JoinTable(name = "mdc_relationship_role_user", joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private Set<Account> accounts = new HashSet<>(0);
 }

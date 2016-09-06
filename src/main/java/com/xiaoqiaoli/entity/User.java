@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -37,7 +40,12 @@ public class User extends BaseEntity implements Serializable {
 
     private Level level;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Corporation corporation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 }

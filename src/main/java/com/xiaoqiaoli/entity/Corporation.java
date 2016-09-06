@@ -1,12 +1,16 @@
 package com.xiaoqiaoli.entity;
 
 import com.xiaoqiaoli.enums.Level;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by hanlei6 on 2016/8/6.
@@ -80,4 +84,10 @@ public class Corporation extends BaseEntity implements Serializable {
     private String contactIdentificationCardDownCopy; // 企业联系人身份证背面
 
     private Level level; // 等级,A:普通会员,B:铜牌会员,C:银牌会员,D:金牌会员
+
+    @OneToMany(mappedBy = "corporation", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    private Set<Organization> organizations = new HashSet<>(0);
+
+    @OneToMany(mappedBy = "corporation", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    private Set<User> users = new HashSet<>(0);
 }

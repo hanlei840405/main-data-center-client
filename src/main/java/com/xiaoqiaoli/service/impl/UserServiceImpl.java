@@ -1,16 +1,15 @@
 package com.xiaoqiaoli.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.xiaoqiaoli.entity.User;
 import com.xiaoqiaoli.dto.UserDTO;
+import com.xiaoqiaoli.entity.User;
 import com.xiaoqiaoli.manager.UserManager;
 import com.xiaoqiaoli.service.UserLocalService;
 import com.xiaoqiaoli.service.client.UserRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,53 +73,39 @@ public class UserServiceImpl implements UserLocalService, UserRemoteService {
     }
 
     @Override
-    public Page<User> localPage(Page<User> page, String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
-        PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        Page<User> userDOs = (Page<User>) userManager.findByParams(realName, telephone, qq, wx, weiBo, corporationId, organizationId);
-        return userDOs;
+    public Page<User> localPage(Pageable pageable, String corporationId, String organizationId) {
+        return userManager.page(pageable, corporationId, organizationId);
     }
 
     @Override
     @Transactional
-    public User insert(User userDO) {
-        int result = userManager.insert(userDO);
-        if (result > 0) {
-            return userManager.get(userDO.getId());
-        }
-        return null;
+    public User insert(User user) {
+        return userManager.insert(user);
     }
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public User update(User userDO) {
-        int result = userManager.update(userDO);
-        if (result > 0) {
-            return userManager.get(userDO.getId());
-        }
-        return null;
+    public User update(User user) {
+        return userManager.update(user);
     }
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public int delete(String id) {
-        return userManager.delete(localGet(id));
+    public User delete(User user) {
+        return userManager.delete(user);
     }
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public int batchDelete(String[] ids) {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userManager.batchDelete(userManager.findByMultiIds(ids), principal.getUsername());
+    public void batchDelete(List<User> users) {
+        userManager.batch(users);
     }
 
     @Override
-    @Transactional
-    @CacheEvict(cacheNames = {"mdc:user:username", "mdc:user:mail", "mdc:user:telephone", "mdc:user:qq", "mdc:user:wx", "mdc:user:weiBo", "mdc:user:realName", "mdc:user:weiBo"}, allEntries = true)
-    public int disConnectRole(String userId) {
-        return userManager.disConnectRole(userId);
+    public List<User> localFindByIds(String[] ids) {
+        return userManager.findByIds(ids);
     }
-
 }

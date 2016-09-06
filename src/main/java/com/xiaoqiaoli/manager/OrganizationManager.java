@@ -1,26 +1,36 @@
 package com.xiaoqiaoli.manager;
 
 import com.xiaoqiaoli.entity.Organization;
-import com.xiaoqiaoli.repository.BaseMapper;
+import com.xiaoqiaoli.model.Organization_;
 import com.xiaoqiaoli.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.Predicate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/8/12.
  */
 @Component
-public class OrganizationManager extends BaseManager<Organization, String> {
+public class OrganizationManager {
     @Autowired
-    private OrganizationRepository organizationMapper;
+    private OrganizationRepository organizationRepository;
 
-    @Override
-    BaseMapper<Organization, String> getBaseMapper() {
-        return organizationMapper;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${batch.size}")
+    private int batchSize;
+
+    public Organization get(String id) {
+        return organizationRepository.findOne(id);
     }
 
     /**
@@ -30,9 +40,11 @@ public class OrganizationManager extends BaseManager<Organization, String> {
      * @return
      */
     public Organization getByCode(String code) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("code", code);
-        return getOne(params);
+        return organizationRepository.findTopByCode(code);
+    }
+
+    public List<Organization> findByIds(String[] ids) {
+        return organizationRepository.findByIdIn(ids);
     }
 
     /**
@@ -42,9 +54,7 @@ public class OrganizationManager extends BaseManager<Organization, String> {
      * @return
      */
     public List<Organization> findByCorporation(String corporationId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("corporationId", corporationId);
-        return find(params);
+        return organizationRepository.findByCorporationId(corporationId);
     }
 
     /**
@@ -54,9 +64,7 @@ public class OrganizationManager extends BaseManager<Organization, String> {
      * @return
      */
     public List<Organization> findByParent(String parentId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("parentId", parentId);
-        return find(params);
+        return organizationRepository.findByOrganizationId(parentId);
     }
 
     /**
@@ -65,10 +73,8 @@ public class OrganizationManager extends BaseManager<Organization, String> {
      * @param username
      * @return
      */
-    public List<Organization> findByUsername(String username) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("username", username);
-        return find(params);
+    public List<Organization> findByManager(String username) {
+        return organizationRepository.findByUserId(username);
     }
 
     /**
@@ -78,8 +84,33 @@ public class OrganizationManager extends BaseManager<Organization, String> {
      * @return
      */
     public List<Organization> findByFullCode(String fullCode) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("fullCode", fullCode);
-        return find(params);
+        return organizationRepository.findByFullCodeStartingWith(fullCode);
+    }
+
+    public Organization save(Organization organization) {
+        return organizationRepository.save(organization);
+    }
+
+    public void batch(List<Organization> organizations) {
+
+        for (int i = 0; i < organizations.size(); i++) {
+            Organization organization = organizations.get(i);
+            entityManager.merge(organization);
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+    }
+
+    public Page<Organization> page(Pageable pageable, String parentId) {
+        Page<Organization> page = organizationRepository.findAll((root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            if (!StringUtils.isEmpty(parentId)) {
+                predicate.getExpressions().add(cb.equal(root.get(Organization_.organization).get("id"), parentId));
+            }
+            return predicate;
+        }, pageable);
+        return page;
     }
 }

@@ -1,81 +1,103 @@
 package com.xiaoqiaoli.manager;
 
 import com.xiaoqiaoli.entity.User;
-import com.xiaoqiaoli.repository.BaseMapper;
+import com.xiaoqiaoli.model.Organization_;
 import com.xiaoqiaoli.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.Predicate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hanlei6 on 2016/7/15.
  */
 @Component
-public class UserManager extends BaseManager<User, String> {
+public class UserManager {
     private final static Logger LOGGER = LoggerFactory.getLogger(UserManager.class);
     @Autowired
-    private UserRepository userMapper;
+    private UserRepository userRepository;
 
-    @Override
-    BaseMapper<User, String> getBaseMapper() {
-        threadLocal.set(userMapper);
-        return threadLocal.get();
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${batch.size}")
+    private int batchSize;
+
+    public User get(String id) {
+        return userRepository.findOne(id);
     }
 
     public User getByEmail(String email) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("email", email);
-        return getOne(queryParams);
+        return userRepository.findTopByEmail(email);
     }
 
     public User getByTelephone(String telephone) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("telephone", telephone);
-        return getOne(queryParams);
+        return userRepository.findTopByTelephone(telephone);
     }
 
     public User getByQq(String qq) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("qq", qq);
-        return getOne(queryParams);
+        return userRepository.findTopByQq(qq);
     }
 
     public User getByWx(String wx) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("wx", wx);
-        return getOne(queryParams);
+        return userRepository.findTopByWx(wx);
     }
 
     public User getByWeiBo(String weiBo) {
-        Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("weiBo", weiBo);
-        return getOne(queryParams);
+        return userRepository.findTopByWeiBo(weiBo);
     }
 
     public List<User> findByRealName(String realName) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("realName", realName);
-        return find(params);
+        return userRepository.findByRealName(realName);
     }
 
-    public List<User> findByParams(String realName, String telephone, String qq, String wx, String weiBo, String corporationId, String organizationId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("realName", realName);
-        params.put("telephone", telephone);
-        params.put("qq", qq);
-        params.put("wx", wx);
-        params.put("weiBo", weiBo);
-        params.put("corporationId", corporationId);
-        params.put("organizationId", organizationId);
-        return find(params);
+    public Page<User> page(Pageable pageable, String corporationId, String organizationId) {
+        Page<User> page = userRepository.findAll((root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            if (!StringUtils.isEmpty(organizationId)) {
+                predicate.getExpressions().add(cb.equal(root.get(Organization_.organization).get("id"), organizationId));
+            } else {
+                predicate.getExpressions().add(cb.equal(root.get(Organization_.organization).get("id"), corporationId));
+            }
+            return predicate;
+        }, pageable);
+        return page;
     }
 
-    public int disConnectRole(String userId) {
-        return userMapper.disConnectRole(userId);
+    public User insert(User user) {
+        return userRepository.save(user);
+    }
+
+    public User update(User user) {
+        return userRepository.save(user);
+    }
+
+    public User delete(User user) {
+        return userRepository.save(user);
+    }
+
+    public void batch(List<User> roles) {
+
+        for (int i = 0; i < roles.size(); i++) {
+            User user = roles.get(i);
+            entityManager.merge(user);
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+    }
+
+    public List<User> findByIds(String[] ids) {
+        return userRepository.findByIdIn(ids);
     }
 }

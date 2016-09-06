@@ -1,7 +1,8 @@
 package com.xiaoqiaoli.controller;
 
-import com.github.pagehelper.Page;
+import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.User;
+import com.xiaoqiaoli.service.AccountLocalService;
 import com.xiaoqiaoli.service.UserLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -13,6 +14,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +32,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +48,9 @@ public class UserController extends BaseController<User> {
 
     @Autowired
     private GenerateIdRemoteService generateIdRemoteService;
+
+    @Autowired
+    private AccountLocalService accountService;
 
     @Value("${ext.image.dir}")
     private String imageDir;
@@ -80,17 +88,9 @@ public class UserController extends BaseController<User> {
     @RequestMapping(value = "/page")
     public
     @ResponseBody
-    Map<String,Object> page(@RequestParam("current") int current, @RequestParam("rowCount") int rowCount, User user) {
-        Page<User> page = new Page<>();
-        page.setPageNum(current);
-        page.setPageSize(rowCount);
-        Page<User> userDOs = userService.localPage(page, user.getRealName(), user.getTelephone(), user.getQq(), user.getWx(), user.getWeiBo(), null, null);
-        Map<String,Object> result = new HashMap<>();
-        result.put("current", current);
-        result.put("rowCount", rowCount);
-        result.put("total", userDOs.getTotal());
-        result.put("rows", userDOs.getResult());
-        return result;
+    Page<User> page(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, String corporationId, String organizationId) {
+        Pageable pageable = new PageRequest(pageNum, pageSize);
+        return userService.localPage(pageable, corporationId, organizationId);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -108,11 +108,13 @@ public class UserController extends BaseController<User> {
         }
 
         Date createdAndModified = new Date();
+
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         user.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
-        user.setCreator(principal.getUsername());
+        user.setCreator(account);
         user.setCreated(createdAndModified);
-        user.setModifier(principal.getUsername());
+        user.setModifier(account);
         user.setModified(createdAndModified);
         user.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.USER.name()));
         User userDO = userService.insert(user);
@@ -143,7 +145,8 @@ public class UserController extends BaseController<User> {
 
         Date modified = new Date();
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        exist.setModifier(principal.getUsername());
+        Account account = accountService.localGetByUsername(principal.getUsername());
+        exist.setModifier(account);
         exist.setModified(modified);
         User userDO = userService.update(exist);
         Map<String, Object> result = new HashMap<>();
@@ -155,9 +158,17 @@ public class UserController extends BaseController<User> {
     public
     @ResponseBody
     Map<String, Object> delete(@RequestParam("ids") String ids) {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         Map<String, Object> result = new HashMap<>();
+        List<User> users = userService.localFindByIds(ids.split(","));
+        users.forEach(user -> {
+            user.setModified(new Date());
+            user.setModifier(account);
+            user.setStatus("0");
+        });
         try {
-            userService.batchDelete(ids.split(","));
+            userService.batchDelete(users);
             result.put(Constant.RETURN_MAP_KEY_STATUS, Constant.RETURN_MAP_VALUE_STATUS_SUCCESS);
             result.put(Constant.RETURN_MAP_KEY_MESSAGE, Constant.RETURN_MAP_VALUE_MESSAGE_INSERT_SUCCESS);
         } catch (RuntimeException e) {

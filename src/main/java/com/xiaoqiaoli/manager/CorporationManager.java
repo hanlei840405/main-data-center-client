@@ -1,14 +1,21 @@
 package com.xiaoqiaoli.manager;
 
-import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.Corporation;
+import com.xiaoqiaoli.model.Corporation_;
 import com.xiaoqiaoli.repository.CorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.Date;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.Predicate;
 import java.util.List;
 
 /**
@@ -21,6 +28,12 @@ public class CorporationManager {
     @Autowired
     private CorporationRepository corporationRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${batch.size}")
+    private int batchSize;
+
     /**
      * 根据id查询企业信息
      *
@@ -29,6 +42,10 @@ public class CorporationManager {
      */
     public Corporation get(String id) {
         return corporationRepository.findOne(id);
+    }
+
+    public List<Corporation> findByIds(String[] ids) {
+        return corporationRepository.findByIdIn(ids);
     }
 
     /**
@@ -61,37 +78,37 @@ public class CorporationManager {
         return corporationRepository.findByLegalPersonLike(legalPerson);
     }
 
-    /**
-     * 入驻企业变为状态正常/欠费禁用
-     *
-     * @param ids
-     * @param modifier
-     * @return
-     */
-    public int enableOrDisable(String[] ids, Account modifier, String status) {
-        try {
-            List<Corporation> corporations = corporationRepository.findByIdIn(ids);
-            for (Corporation corporation : corporations) {
-                corporation.setStatus(status);
-                corporation.setModifier(modifier);
-                corporation.setModified(new Date());
+
+    public Corporation save(Corporation corporation) {
+        return corporationRepository.save(corporation);
+    }
+
+    @Transactional
+    public void batch(List<Corporation> corporations) {
+        for (int i = 0; i < corporations.size(); i++) {
+            Corporation corporation = corporations.get(i);
+            entityManager.merge(corporation);
+            if (i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
             }
-            corporationRepository.save(corporations);
-            return 1;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            LOGGER.error("入驻企业变为状态正常失败,参数为:{},{},{}", ids, modifier, status);
-            return 0;
         }
     }
 
-    public Corporation save(Corporation corporation) {
-        try {
-            return corporationRepository.save(corporation);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            LOGGER.error("入驻企业保存失败,参数为:{}", corporation);
-            return null;
-        }
+    public Page<Corporation> page(Pageable pageable, String name, String legalPerson, String contact) {
+        Page<Corporation> page = corporationRepository.findAll((root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+            if (!StringUtils.isEmpty(name)) {
+                predicate.getExpressions().add(cb.like(root.get(Corporation_.name), "%".concat(name).concat("%")));
+            }
+            if (!StringUtils.isEmpty(legalPerson)) {
+                predicate.getExpressions().add(cb.like(root.get(Corporation_.legalPerson), "%".concat(legalPerson).concat("%")));
+            }
+            if (!StringUtils.isEmpty(contact)) {
+                predicate.getExpressions().add(cb.like(root.get(Corporation_.contact), "%".concat(contact).concat("%")));
+            }
+            return predicate;
+        }, pageable);
+        return page;
     }
 }

@@ -1,6 +1,8 @@
 package com.xiaoqiaoli.controller;
 
+import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.Organization;
+import com.xiaoqiaoli.service.AccountLocalService;
 import com.xiaoqiaoli.service.OrganizationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -34,6 +36,9 @@ public class OrganizationController extends BaseController<Organization> {
 
     @Autowired
     private GenerateIdRemoteService generateIdRemoteService;
+
+    @Autowired
+    private AccountLocalService accountService;
 
     @RequestMapping("/index")
     public String index() {
@@ -84,9 +89,10 @@ public class OrganizationController extends BaseController<Organization> {
     Map<String, Object> save(Organization organization) {
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         organization.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
-        organization.setCreator(principal.getUsername());
-        organization.setModifier(principal.getUsername());
+        organization.setCreator(account);
+        organization.setModifier(account);
         organization.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.ORGANIZATION.name()));
         Organization organizationDO = organizationService.insert(organization);
         Map<String, Object> result = new HashMap<>();
@@ -109,7 +115,8 @@ public class OrganizationController extends BaseController<Organization> {
         BeanUtils.copyProperties(organization, exist, "creator", "created");
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        exist.setModifier(principal.getUsername());
+        Account account = accountService.localGetByUsername(principal.getUsername());
+        exist.setModifier(account);
         Organization organizationDO = organizationService.update(exist);
         buildResponseStatus(organizationDO, result);
         return result;
@@ -119,9 +126,17 @@ public class OrganizationController extends BaseController<Organization> {
     public
     @ResponseBody
     Map<String, Object> delete(@RequestParam("ids") String ids) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         Map<String, Object> result = new HashMap<>();
+        List<Organization> organizations = organizationService.localFindByIds(ids.split(","));
+        organizations.forEach(organization -> {
+            organization.setModified(new Date());
+            organization.setModifier(account);
+            organization.setStatus("0");
+        });
         try {
-            organizationService.batchDelete(ids.split(","));
+            organizationService.batchDelete(organizations);
             result.put(Constant.RETURN_MAP_KEY_STATUS, Constant.RETURN_MAP_VALUE_STATUS_SUCCESS);
             result.put(Constant.RETURN_MAP_KEY_MESSAGE, Constant.RETURN_MAP_VALUE_MESSAGE_INSERT_SUCCESS);
         } catch (RuntimeException e) {

@@ -12,19 +12,17 @@ public interface RoleLocalService {
 
     Role getByCode(String code);
 
-    List<Role> findByName(String name);
-
     List<Role> findByUsername(String username);
 
-    int insert(Role roleDO);
+    Role insert(Role roleDO);
 
-    int update(Role roleDO);
+    Role update(Role roleDO);
 
-    int delete(Role roleDO);
+    Role delete(Role roleDO);
 
-    int batchDelete(String[] ids);
+    void batchDelete(List<Role> roles);
 
-    int connectAccount(Role roleDO);
+    Role connectAccount(Role role);
 
-    int disConnectAccount(String roleId);
+    Role disConnectAccount(Role role);
 }

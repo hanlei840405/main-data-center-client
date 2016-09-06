@@ -1,9 +1,7 @@
 package com.xiaoqiaoli.service.impl;
 
 import com.xiaoqiaoli.dto.CorporationDTO;
-import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.Corporation;
-import com.xiaoqiaoli.manager.AccountManager;
 import com.xiaoqiaoli.manager.CorporationManager;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.CorporationRemoteService;
@@ -13,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,9 +26,6 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     @Autowired
     private CorporationManager corporationManager;
 
-    @Autowired
-    private AccountManager accountManager;
-
     @Override
     @Cacheable(cacheNames = "mdc:corporation:username", key = "'/corporationService/remoteGetByAccount/'.concat(#username)")
     public CorporationDTO remoteGetByAccount(String username) {
@@ -42,6 +36,11 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     @Cacheable(cacheNames = "mdc:corporation:id", key = "'/corporationService/localGet/'.concat(#id)")
     public Corporation localGet(String id) {
         return corporationManager.get(id);
+    }
+
+    @Override
+    public List<Corporation> localFindByIds(String[] ids) {
+        return corporationManager.findByIds(ids);
     }
 
     @Override
@@ -63,8 +62,8 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
     }
 
     @Override
-    public Page<Corporation> localPage(Page<Corporation> page, String payload) {
-        return null;
+    public Page<Corporation> localPage(Pageable pageable, String name, String legalPerson, String contact) {
+        return corporationManager.page(pageable, name, legalPerson, contact);
     }
 
     @Override
@@ -80,42 +79,39 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public int batchEnable(String[] ids) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account modifier = accountManager.getByUsername(principal.getUsername());
-        return corporationManager.enableOrDisable(ids, modifier, "3");
+    public void batchEnable(List<Corporation> corporations) {
+        corporationManager.batch(corporations);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public int batchDisable(String[] ids) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Account modifier = accountManager.getByUsername(principal.getUsername());
-        return corporationManager.enableOrDisable(ids, modifier, "1");
+    public void batchDisable(List<Corporation> corporations) {
+        corporationManager.batch(corporations);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public int delete(String id) {
-        return corporationManager.delete(localGet(id));
+    public Corporation delete(Corporation corporation) {
+        return corporationManager.save(corporation);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public int batchDelete(String[] ids) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return corporationManager.batchDelete(corporationManager.findByMultiIds(ids), principal.getUsername());
+    public void batchDelete(List<Corporation> corporations) {
+        corporationManager.batch(corporations);
     }
 
     @Override
     @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
-    public int adjust(Corporation corporationDO) {
-        return corporationManager.adjust(corporationDO);
+    public Corporation adjust(Corporation corporation) {
+        return corporationManager.save(corporation);
     }
 
     @Override
     @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
     public CorporationDTO remoteUpdate(CorporationDTO corporationDTO, String username) {
+        // TODO 根据发起请求的用户查询企业信息，如果查询到，则进行更新操作
+//        Corporation corporation = corporationManager.get(corporationDTO.get)
         return null;
     }
 }

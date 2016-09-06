@@ -6,8 +6,6 @@ import com.xiaoqiaoli.service.RoleLocalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,50 +32,43 @@ public class RoleServiceImpl implements RoleLocalService {
     }
 
     @Override
-    @Cacheable(cacheNames = "mdc:role:name", key = "'/roleService/findByName/'.concat(#name)")
-    public List<Role> findByName(String name) {
-        return roleManager.findByName(name);
-    }
-
-    @Override
     @Cacheable(cacheNames = "mdc:role:username", key = "'/roleService/findByUsername/'.concat(#username)")
     public List<Role> findByUsername(String username) {
         return roleManager.findByUsername(username);
     }
 
     @Override
-    public int insert(Role roleDO) {
-        return roleManager.insert(roleDO);
+    public Role insert(Role role) {
+        return roleManager.insert(role);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int update(Role roleDO) {
-        return roleManager.update(roleDO);
+    public Role update(Role role) {
+        return roleManager.update(role);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int delete(Role roleDO) {
-        return roleManager.delete(roleDO);
+    public Role delete(Role role) {
+        return roleManager.delete(role);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int batchDelete(String[] ids) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return roleManager.batchDelete(roleManager.findByMultiIds(ids), principal.getUsername());
+    public void batchDelete(List<Role> roles) {
+        roleManager.batch(roles);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int connectAccount(Role roleDO) {
-        return roleManager.connectAccount(roleDO);
+    public Role connectAccount(Role role) {
+        return roleManager.connectAccount(role);
     }
 
     @Override
     @CacheEvict(cacheNames = {"mdc:role:id", "mdc:role:code", "mdc:role:name", "mdc:role:username"}, allEntries = true)
-    public int disConnectAccount(String roleId) {
-        return roleManager.disConnectAccount(roleId);
+    public Role disConnectAccount(Role role) {
+        return roleManager.disConnectAccount(role);
     }
 }

@@ -1,7 +1,8 @@
 package com.xiaoqiaoli.controller;
 
-import com.github.pagehelper.Page;
+import com.xiaoqiaoli.entity.Account;
 import com.xiaoqiaoli.entity.Corporation;
+import com.xiaoqiaoli.service.AccountLocalService;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.GenerateIdRemoteService;
 import com.xiaoqiaoli.util.Constant;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,16 +46,14 @@ public class CorporationController extends BaseController<Corporation> {
     @Autowired
     private GenerateIdRemoteService generateIdRemoteService;
 
+    @Autowired
+    private AccountLocalService accountService;
+
     @Value("${ext.image.dir}")
     private String imageDir;
 
     @RequestMapping("/index")
-    public String index(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize, Corporation corporation, Model model) {
-        Page<Corporation> page = new Page<>();
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        page = corporationService.localPage(page, corporation.getName(), corporation.getContact(), corporation.getLegalPerson());
-        model.addAttribute("page", page);
+    public String index() {
         return "corporation/index";
     }
 
@@ -86,9 +86,10 @@ public class CorporationController extends BaseController<Corporation> {
         corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         corporation.setStatus(Constant.PERSISTENT_OBJECT_STATUS_ACTIVE);
-        corporation.setCreator(principal.getUsername());
-        corporation.setModifier(principal.getUsername());
+        corporation.setCreator(account);
+        corporation.setModifier(account);
         corporation.setId(generateIdRemoteService.get(Constant.APPLICATION, Module.CORPORATION.name()));
         Corporation corporationDO = corporationService.insert(corporation);
         Map<String, Object> result = new HashMap<>();
@@ -101,11 +102,11 @@ public class CorporationController extends BaseController<Corporation> {
     @ResponseBody
     Map<String, Object> update(MultipartFile logoFile, MultipartFile blcFile, MultipartFile trccFile, MultipartFile occFile, MultipartFile aolcFile, MultipartFile lpicucFile,
                                MultipartFile lpicdcFile, MultipartFile cicucFile, MultipartFile cicdcFile, Corporation corporation) {
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         corporation = uploadCopy(corporation, logoFile, blcFile, trccFile, occFile, aolcFile, lpicucFile, lpicdcFile, cicucFile, cicdcFile);
 
         Corporation exist = corporationService.localGet(corporation.getId());
-        if(corporation.getVersion() != exist.getVersion()) {
+        if (corporation.getVersion() != exist.getVersion()) {
             LOGGER.error("请求中参数版本与最新版本存在差异,保存失败,失败参数{}", corporation);
             super.buildResponseStatus(null, result);
             return result;
@@ -138,7 +139,8 @@ public class CorporationController extends BaseController<Corporation> {
         BeanUtils.copyProperties(corporation, exist, "creator", "created");
 
         User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        exist.setModifier(principal.getUsername());
+        Account account = accountService.localGetByUsername(principal.getUsername());
+        exist.setModifier(account);
         Corporation corporationDO = corporationService.update(exist);
         buildResponseStatus(corporationDO, result);
         return result;
@@ -148,9 +150,17 @@ public class CorporationController extends BaseController<Corporation> {
     public
     @ResponseBody
     Map<String, Object> delete(@RequestParam("ids") String ids) {
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Account account = accountService.localGetByUsername(principal.getUsername());
         Map<String, Object> result = new HashMap<>();
+        List<Corporation> corporations = corporationService.localFindByIds(ids.split(","));
+        corporations.forEach(corporation -> {
+            corporation.setModified(new Date());
+            corporation.setModifier(account);
+            corporation.setStatus("0");
+        });
         try {
-            corporationService.batchDelete(ids.split(","));
+            corporationService.batchDelete(corporations);
             result.put(Constant.RETURN_MAP_KEY_STATUS, Constant.RETURN_MAP_VALUE_STATUS_SUCCESS);
             result.put(Constant.RETURN_MAP_KEY_MESSAGE, Constant.RETURN_MAP_VALUE_MESSAGE_INSERT_SUCCESS);
         } catch (RuntimeException e) {

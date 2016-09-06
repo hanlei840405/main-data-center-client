@@ -1,7 +1,8 @@
 package com.xiaoqiaoli.service;
 
-import com.github.pagehelper.Page;
 import com.xiaoqiaoli.entity.Organization;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,21 +14,23 @@ public interface OrganizationLocalService {
 
     Organization localGetByCode(String code);
 
+    List<Organization> localFindByIds(String[] ids);
+
     List<Organization> localFindByCorporation(String corporationId);
 
     List<Organization> localFindByParent(String parentId);
 
-    List<Organization> localFindByUsername(String username);
+    List<Organization> localFindByManager(String username);
 
     List<Organization> localFindByFullCode(String fullCode);
 
-    Page<Organization> localPage(Page<Organization> page, String parentId);
+    Page<Organization> localPage(Pageable pageable, String parentId);
 
     Organization insert(Organization corporationDO);
 
     Organization update(Organization corporationDO);
 
-    int delete(String id);
+    Organization delete(Organization corporationDO);
 
-    int batchDelete(String[] ids);
+    void batchDelete(List<Organization> organizations);
 }

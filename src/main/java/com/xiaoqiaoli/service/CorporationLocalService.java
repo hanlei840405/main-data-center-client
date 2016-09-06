@@ -2,6 +2,7 @@ package com.xiaoqiaoli.service;
 
 import com.xiaoqiaoli.entity.Corporation;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,25 +12,27 @@ import java.util.List;
 public interface CorporationLocalService {
     Corporation localGet(String id);
 
+    List<Corporation> localFindByIds(String[] ids);
+
     List<Corporation> localFindByName(String name);
 
     List<Corporation> localFindByContact(String contact);
 
     List<Corporation> localFindByLegalPerson(String legalPerson);
 
-    Page<Corporation> localPage(Page<Corporation> page, String payload);
+    Page<Corporation> localPage(Pageable pageable, String name, String legalPerson, String contact);
 
     Corporation insert(Corporation corporation);
 
     Corporation update(Corporation corporation);
 
-    int batchEnable(String[] ids);
+    void batchEnable(List<Corporation> corporations);
 
-    int batchDisable(String[] ids);
+    void batchDisable(List<Corporation> corporations);
 
-    int delete(String id);
+    Corporation delete(Corporation corporation);
 
-    int batchDelete(String[] ids);
+    void batchDelete(List<Corporation> corporations);
 
-    int adjust(Corporation corporation);
+    Corporation adjust(Corporation corporation);
 }
