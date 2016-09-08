@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/css/**", "/fonts/**", "/img/**", "/js/**", "/media/**", "/favicon.ico", "/scripts/**", "/styles/**", "/assets/**", "/maps/**").permitAll()
+                .antMatchers("/api/**", "/css/**", "/fonts/**", "/img/**", "/js/**", "/media/**", "/favicon.ico", "/scripts/**", "/styles/**", "/assets/**", "/maps/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
@@ -43,5 +43,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .inMemoryAuthentication()
                 .withUser("admin").password("123456").roles("ADMIN");
     }
-
 }
