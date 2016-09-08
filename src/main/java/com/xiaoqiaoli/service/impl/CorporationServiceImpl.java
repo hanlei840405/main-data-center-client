@@ -5,15 +5,17 @@ import com.xiaoqiaoli.entity.Corporation;
 import com.xiaoqiaoli.manager.CorporationManager;
 import com.xiaoqiaoli.service.CorporationLocalService;
 import com.xiaoqiaoli.service.client.CorporationRemoteService;
+import com.xiaoqiaoli.vo.CorporationVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,77 +36,144 @@ public class CorporationServiceImpl implements CorporationRemoteService, Corpora
 
     @Override
 //    @Cacheable(cacheNames = "mdc:corporation:id", key = "'/corporationService/localGet/'.concat(#id)")
-    public Corporation localGet(String id) {
-        return corporationManager.get(id);
+    public CorporationVO localGet(String id) {
+        CorporationVO vo = new CorporationVO();
+        BeanUtils.copyProperties(corporationManager.get(id), vo);
+        return vo;
     }
 
     @Override
-    public List<Corporation> localFindByIds(String[] ids) {
-        return corporationManager.findByIds(ids);
+    public List<CorporationVO> localFindByIds(String[] ids) {
+        List<CorporationVO> vos = new ArrayList<>();
+        corporationManager.findByIds(ids).forEach(corporation -> {
+            CorporationVO vo = new CorporationVO();
+            BeanUtils.copyProperties(corporation, vo);
+            vos.add(vo);
+        });
+        return vos;
     }
 
     @Override
 //    @Cacheable(cacheNames = "mdc:corporation:name", key = "'/corporationService/localFindByName/'.concat(#name)")
-    public List<Corporation> localFindByName(String name) {
-        return corporationManager.findByName(name);
+    public List<CorporationVO> localFindByName(String name) {
+        List<CorporationVO> vos = new ArrayList<>();
+        corporationManager.findByName(name).forEach(corporation -> {
+            CorporationVO vo = new CorporationVO();
+            BeanUtils.copyProperties(corporation, vo);
+            vos.add(vo);
+        });
+        return vos;
     }
 
     @Override
 //    @Cacheable(cacheNames = "mdc:corporation:contact", key = "'/corporationService/localFindByContact/'.concat(#contact)")
-    public List<Corporation> localFindByContact(String contact) {
-        return corporationManager.findByContact(contact);
+    public List<CorporationVO> localFindByContact(String contact) {
+        List<CorporationVO> vos = new ArrayList<>();
+        corporationManager.findByContact(contact).forEach(corporation -> {
+            CorporationVO vo = new CorporationVO();
+            BeanUtils.copyProperties(corporation, vo);
+            vos.add(vo);
+        });
+        return vos;
     }
 
     @Override
 //    @Cacheable(cacheNames = "mdc:corporation:legalPerson", key = "'/corporationService/localFindByLegalPerson/'.concat(#legalPerson)")
-    public List<Corporation> localFindByLegalPerson(String legalPerson) {
-        return corporationManager.findByLegalPerson(legalPerson);
+    public List<CorporationVO> localFindByLegalPerson(String legalPerson) {
+        List<CorporationVO> vos = new ArrayList<>();
+        corporationManager.findByLegalPerson(legalPerson).forEach(corporation -> {
+            CorporationVO vo = new CorporationVO();
+            BeanUtils.copyProperties(corporation, vo);
+            vos.add(vo);
+        });
+        return vos;
     }
 
     @Override
-    public Page<Corporation> localPage(Pageable pageable, String name, String legalPerson, String contact) {
-        return corporationManager.page(pageable, name, legalPerson, contact);
+    public Page<CorporationVO> localPage(Pageable pageable, String name, String legalPerson, String contact) {
+        List<CorporationVO> vos = new ArrayList<>();
+        Page<Corporation> page = corporationManager.page(pageable, name, legalPerson, contact);
+        page.forEach(corporation -> {
+            CorporationVO vo = new CorporationVO();
+            BeanUtils.copyProperties(corporation, vo);
+            vos.add(vo);
+        });
+        return new PageImpl<>(vos, pageable, page.getTotalElements());
     }
 
     @Override
-    public Corporation insert(Corporation corporation) {
-        return corporationManager.save(corporation);
+    public CorporationVO insert(CorporationVO corporationVO) {
+        Corporation corporation = new Corporation();
+        BeanUtils.copyProperties(corporationVO, corporation);
+        corporation = corporationManager.save(corporation);
+        BeanUtils.copyProperties(corporation, corporationVO);
+        return corporationVO;
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public Corporation update(Corporation corporation) {
-        return corporationManager.save(corporation);
+    public CorporationVO update(CorporationVO corporationVO) {
+        Corporation corporation = new Corporation();
+        BeanUtils.copyProperties(corporationVO, corporation);
+        corporation = corporationManager.save(corporation);
+        BeanUtils.copyProperties(corporation, corporationVO);
+        return corporationVO;
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public void batchEnable(List<Corporation> corporations) {
+    public void batchEnable(List<CorporationVO> corporationVOs) {
+        List<Corporation> corporations = new ArrayList<>();
+        corporationVOs.forEach(corporationVO -> {
+            Corporation corporation = new Corporation();
+            BeanUtils.copyProperties(corporationVO, corporation);
+            corporations.add(corporation);
+        });
         corporationManager.batch(corporations);
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public void batchDisable(List<Corporation> corporations) {
+    public void batchDisable(List<CorporationVO> corporationVOs) {
+        List<Corporation> corporations = new ArrayList<>();
+        corporationVOs.forEach(corporationVO -> {
+            Corporation corporation = new Corporation();
+            BeanUtils.copyProperties(corporationVO, corporation);
+            corporations.add(corporation);
+        });
         corporationManager.batch(corporations);
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public Corporation delete(Corporation corporation) {
-        return corporationManager.save(corporation);
+    public CorporationVO delete(CorporationVO corporationVO) {
+        Corporation corporation = new Corporation();
+        BeanUtils.copyProperties(corporationVO, corporation);
+        corporation = corporationManager.save(corporation);
+        BeanUtils.copyProperties(corporation, corporationVO);
+        return corporationVO;
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"mdc:corporation:username", "mdc:corporation:id", "mdc:corporation:name", "mdc:corporation:contact", "mdc:corporation:legalPerson"}, allEntries = true, beforeInvocation = true)
-    public void batchDelete(List<Corporation> corporations) {
+    public void batchDelete(List<CorporationVO> corporationVOs) {
+        List<Corporation> corporations = new ArrayList<>();
+        corporationVOs.forEach(corporationVO -> {
+            Corporation corporation = new Corporation();
+            BeanUtils.copyProperties(corporationVO, corporation);
+            corporations.add(corporation);
+        });
         corporationManager.batch(corporations);
     }
 
     @Override
 //    @CacheEvict(cacheNames = "mdc:corporation", allEntries = true, beforeInvocation = true)
-    public Corporation adjust(Corporation corporation) {
-        return corporationManager.save(corporation);
+    public CorporationVO adjust(CorporationVO corporationVO) {
+        Corporation corporation = new Corporation();
+        BeanUtils.copyProperties(corporationVO, corporation);
+        corporation = corporationManager.save(corporation);
+        BeanUtils.copyProperties(corporation, corporationVO);
+        return corporationVO;
     }
 
     @Override
