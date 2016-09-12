@@ -56,8 +56,7 @@ public class CorporationController extends BaseController<CorporationVO> {
     }
 
     @RequestMapping("/add")
-    public String add(Model model) {
-        model.addAllAttributes(provincesAndCities());
+    public String add() {
         return "corporation/add";
     }
 
@@ -70,7 +69,6 @@ public class CorporationController extends BaseController<CorporationVO> {
 
     @RequestMapping("/edit")
     public String edit(@RequestParam("id") String id, Model model) {
-        model.addAllAttributes(provincesAndCities());
         CorporationVO corporationVO = corporationService.localGet(id);
         model.addAttribute("corporation", corporationVO);
         return "corporation/edit";
