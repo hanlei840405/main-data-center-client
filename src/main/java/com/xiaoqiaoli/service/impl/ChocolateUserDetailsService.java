@@ -36,9 +36,9 @@ public class ChocolateUserDetailsService implements UserDetailsService {
         if (ObjectUtils.isEmpty(account.getUser())) {
             throw new UsernameNotFoundException("用户[" + username + "] 未绑定人员信息");
         }
-        List<Role> roleDOs = roleService.findByUsername(username);
+//        List<Role> roleDOs = roleService.findByUsername(username);
         List<SimpleGrantedAuthority> auths = new java.util.ArrayList<>();
-        roleDOs.forEach(roleDO -> auths.add(new SimpleGrantedAuthority(roleDO.getCode())));
+//        roleDOs.forEach(roleDO -> auths.add(new SimpleGrantedAuthority(roleDO.getCode())));
 
         return new User(account.getUsername(),account.getPassword(), auths);
     }
